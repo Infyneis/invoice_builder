@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save, Building2, User, MapPin, FileText } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function NewClientPage() {
   const router = useRouter();
@@ -44,14 +45,15 @@ export default function NewClientPage() {
       });
 
       if (res.ok) {
+        toast.success("Client créé avec succès");
         router.push("/clients");
       } else {
         const error = await res.json();
-        alert(error.error || "Une erreur est survenue");
+        toast.error(error.error || "Une erreur est survenue");
       }
     } catch (error) {
       console.error("Failed to create client:", error);
-      alert("Une erreur est survenue");
+      toast.error("Une erreur est survenue");
     } finally {
       setIsLoading(false);
     }

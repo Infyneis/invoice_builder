@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +42,9 @@ export default function RootLayout({
 
           {/* Main content */}
           <main className="relative min-h-screen">{children}</main>
+
+          {/* Toast notifications */}
+          <Toaster position="top-right" richColors />
         </Providers>
       </body>
     </html>

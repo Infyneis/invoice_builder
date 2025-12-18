@@ -12,8 +12,9 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Plus, Users, Mail, Phone, MapPin, Eye, Trash2 } from "lucide-react";
+import { Plus, Users, Mail, Phone, MapPin, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 import type { Client } from "@/types/invoice";
 
 interface ClientWithInvoiceCount extends Client {
@@ -31,7 +32,7 @@ export function ClientList({ clients }: ClientListProps) {
   const handleDelete = async (client: ClientWithInvoiceCount) => {
     const invoiceCount = client._count?.invoices || 0;
     if (invoiceCount > 0) {
-      alert(`Impossible de supprimer ce client car il a ${invoiceCount} facture(s).`);
+      toast.error(`Impossible de supprimer ce client car il a ${invoiceCount} facture(s).`);
       return;
     }
 
@@ -46,14 +47,15 @@ export function ClientList({ clients }: ClientListProps) {
       });
 
       if (res.ok) {
+        toast.success("Client supprimé avec succès");
         router.refresh();
       } else {
         const data = await res.json();
-        alert(data.error || "Erreur lors de la suppression");
+        toast.error(data.error || "Erreur lors de la suppression");
       }
     } catch (error) {
       console.error("Failed to delete client:", error);
-      alert("Erreur lors de la suppression");
+      toast.error("Erreur lors de la suppression");
     } finally {
       setDeletingId(null);
     }
@@ -89,14 +91,15 @@ export function ClientList({ clients }: ClientListProps) {
             </TableHeader>
             <TableBody>
               {clients.map((client) => (
-                <TableRow key={client.id} className="hover:bg-zinc-800/50">
+                <TableRow
+                  key={client.id}
+                  className="hover:bg-zinc-800/50 cursor-pointer"
+                  onClick={() => router.push(`/clients/${client.id}`)}
+                >
                   <TableCell>
-                    <Link
-                      href={`/clients/${client.id}`}
-                      className="text-primary-400 hover:underline font-medium"
-                    >
+                    <span className="text-primary-400 font-medium">
                       {client.name}
-                    </Link>
+                    </span>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
@@ -125,17 +128,15 @@ export function ClientList({ clients }: ClientListProps) {
                       <span className="text-zinc-500">—</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-1">
-                      <Button asChild variant="ghost" size="icon">
-                        <Link href={`/clients/${client.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDelete(client)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(client);
+                        }}
                         disabled={deletingId === client.id}
                         className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                       >

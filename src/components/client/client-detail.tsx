@@ -23,9 +23,9 @@ import {
   Building2,
   FileText,
   Trash2,
-  Edit,
   Plus,
 } from "lucide-react";
+import { toast } from "sonner";
 import { formatCurrency, formatDate, getStatusLabel } from "@/lib/utils";
 import type { Client, Invoice } from "@/types/invoice";
 
@@ -57,14 +57,15 @@ export function ClientDetail({ client }: ClientDetailProps) {
       });
 
       if (res.ok) {
+        toast.success("Client supprimé avec succès");
         router.push("/clients");
       } else {
         const data = await res.json();
-        alert(data.error || "Erreur lors de la suppression");
+        toast.error(data.error || "Erreur lors de la suppression");
       }
     } catch (error) {
       console.error("Failed to delete client:", error);
-      alert("Erreur lors de la suppression");
+      toast.error("Erreur lors de la suppression");
     } finally {
       setIsDeleting(false);
     }

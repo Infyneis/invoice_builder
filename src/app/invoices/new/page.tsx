@@ -1,16 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/ui/navbar";
 import { InvoiceForm } from "@/components/invoice/invoice-form";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 import type { InvoiceFormData, Client } from "@/types/invoice";
 
 export default function NewInvoicePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const clientIdFromUrl = searchParams.get("clientId");
+
   const [clients, setClients] = useState<Client[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingClients, setIsLoadingClients] = useState(true);
@@ -44,14 +48,15 @@ export default function NewInvoicePage() {
 
       if (res.ok) {
         const invoice = await res.json();
+        toast.success("Facture créée avec succès");
         router.push(`/invoices/${invoice.id}`);
       } else {
         const error = await res.json();
-        alert(error.message || "Une erreur est survenue");
+        toast.error(error.error || "Une erreur est survenue");
       }
     } catch (error) {
       console.error("Failed to create invoice:", error);
-      alert("Une erreur est survenue");
+      toast.error("Une erreur est survenue");
     } finally {
       setIsLoading(false);
     }
@@ -87,6 +92,7 @@ export default function NewInvoicePage() {
             clients={clients}
             onSubmit={handleSubmit}
             isLoading={isLoading}
+            initialData={clientIdFromUrl ? { clientId: clientIdFromUrl } : undefined}
           />
         )}
       </div>

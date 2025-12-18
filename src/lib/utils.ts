@@ -92,10 +92,7 @@ export function calculateInvoiceTotals(
 }
 
 // Invoice number generation
-export async function generateInvoiceNumber(): Promise<string> {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
-  return `INV-${year}${month}-${random}`;
+export function generateInvoiceNumber(prefix: string, num: number): string {
+  const paddedNum = String(num).padStart(4, "0");
+  return `${prefix}-${paddedNum}`;
 }

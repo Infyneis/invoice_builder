@@ -21,6 +21,7 @@ import {
   CreditCard,
   FileText,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { Profile } from "@/types/invoice";
 
 const currencies = [
@@ -98,13 +99,13 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        alert("Profil enregistré avec succès !");
+        toast.success("Profil enregistré avec succès");
       } else {
-        alert("Une erreur est survenue");
+        toast.error("Une erreur est survenue");
       }
     } catch (error) {
       console.error("Failed to save profile:", error);
-      alert("Une erreur est survenue");
+      toast.error("Une erreur est survenue");
     } finally {
       setIsLoading(false);
     }
