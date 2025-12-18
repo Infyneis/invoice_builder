@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,15 +12,53 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Plus, Users, Mail, Phone, MapPin } from "lucide-react";
+import { Plus, Users, Mail, Phone, MapPin, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import type { Client } from "@/types/invoice";
 
+interface ClientWithInvoiceCount extends Client {
+  _count?: { invoices: number };
+}
+
 interface ClientListProps {
-  clients: Client[];
+  clients: ClientWithInvoiceCount[];
 }
 
 export function ClientList({ clients }: ClientListProps) {
+  const router = useRouter();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (client: ClientWithInvoiceCount) => {
+    const invoiceCount = client._count?.invoices || 0;
+    if (invoiceCount > 0) {
+      alert(`Impossible de supprimer ce client car il a ${invoiceCount} facture(s).`);
+      return;
+    }
+
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${client.name} ?`)) {
+      return;
+    }
+
+    setDeletingId(client.id);
+    try {
+      const res = await fetch(`/api/clients/${client.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error("Failed to delete client:", error);
+      alert("Erreur lors de la suppression");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <Card className="glass border border-zinc-800 rounded-lg">
       <CardContent className="p-0">
@@ -44,6 +84,7 @@ export function ClientList({ clients }: ClientListProps) {
                 <TableHead>Contact</TableHead>
                 <TableHead>Adresse</TableHead>
                 <TableHead>Entreprise</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -83,6 +124,24 @@ export function ClientList({ clients }: ClientListProps) {
                     {client.companyName || (
                       <span className="text-zinc-500">—</span>
                     )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button asChild variant="ghost" size="icon">
+                        <Link href={`/clients/${client.id}`}>
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(client)}
+                        disabled={deletingId === client.id}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

@@ -11,6 +11,11 @@ async function getClients() {
     const clients = await prisma.client.findMany({
       where: { profileId: profile.id },
       orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: { invoices: true },
+        },
+      },
     });
     return clients;
   } catch {
