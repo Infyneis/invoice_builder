@@ -19,7 +19,6 @@ import {
   CreditCard,
   FileText,
 } from "lucide-react";
-import { FormField } from "@/components/ui/form-field";
 import type { Profile } from "@/types/invoice";
 
 const currencies = [
@@ -179,146 +178,136 @@ export default function SettingsPage() {
                   {profileType === "BUSINESS" ? "entreprise" : "personnelles"}
                 </h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <FormField
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
                   label={profileType === "BUSINESS" ? "Nom de l'entreprise" : "Nom complet"}
-                  required
-                >
-                  <Input
-                    placeholder={profileType === "BUSINESS" ? "ACME Inc." : "Jean Dupont"}
-                    value={formData.name || ""}
-                    onChange={(e) => handleChange("name", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Email" required>
-                  <Input
-                    type="email"
-                    placeholder="contact@example.com"
-                    value={formData.email || ""}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Téléphone">
-                  <Input
-                    placeholder="+33 1 23 45 67 89"
-                    value={formData.phone || ""}
-                    onChange={(e) => handleChange("phone", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Site web">
-                  <Input
-                    placeholder="https://example.com"
-                    value={formData.website || ""}
-                    onChange={(e) => handleChange("website", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
+                  isRequired
+                  placeholder={profileType === "BUSINESS" ? "ACME Inc." : "Jean Dupont"}
+                  value={formData.name || ""}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Email"
+                  isRequired
+                  type="email"
+                  placeholder="contact@example.com"
+                  value={formData.email || ""}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Téléphone"
+                  placeholder="+33 1 23 45 67 89"
+                  value={formData.phone || ""}
+                  onChange={(e) => handleChange("phone", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Site web"
+                  placeholder="https://example.com"
+                  value={formData.website || ""}
+                  onChange={(e) => handleChange("website", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
                 {profileType === "BUSINESS" && (
                   <>
-                    <FormField label="Numéro TVA / SIRET">
-                      <Input
-                        placeholder="FR12345678901"
-                        value={formData.taxId || ""}
-                        onChange={(e) => handleChange("taxId", e.target.value)}
-                        variant="bordered"
-                        radius="lg"
-                        size="lg"
-                          />
-                    </FormField>
-                    <FormField label="Numéro RCS">
-                      <Input
-                        placeholder="Paris B 123 456 789"
-                        value={formData.registrationNo || ""}
-                        onChange={(e) => handleChange("registrationNo", e.target.value)}
-                        variant="bordered"
-                        radius="lg"
-                        size="lg"
-                          />
-                    </FormField>
+                    <Input
+                      label="Numéro TVA / SIRET"
+                      placeholder="FR12345678901"
+                      value={formData.taxId || ""}
+                      onChange={(e) => handleChange("taxId", e.target.value)}
+                      variant="flat"
+                      radius="md"
+                      labelPlacement="outside"
+                    />
+                    <Input
+                      label="Numéro RCS"
+                      placeholder="Paris B 123 456 789"
+                      value={formData.registrationNo || ""}
+                      onChange={(e) => handleChange("registrationNo", e.target.value)}
+                      variant="flat"
+                      radius="md"
+                      labelPlacement="outside"
+                    />
                   </>
                 )}
                 {profileType === "FREELANCER" && (
                   <>
-                    <FormField label="Titre professionnel">
-                      <Input
-                        placeholder="Développeur Web"
-                        value={formData.title || ""}
-                        onChange={(e) => handleChange("title", e.target.value)}
-                        variant="bordered"
-                        radius="lg"
-                        size="lg"
-                          />
-                    </FormField>
-                    <FormField label="Taux horaire par défaut (€)">
-                      <Input
-                        type="number"
-                        placeholder="75"
-                        value={formData.hourlyRate?.toString() || ""}
-                        onChange={(e) =>
-                          handleChange("hourlyRate", parseFloat(e.target.value) || 0)
-                        }
-                        variant="bordered"
-                        radius="lg"
-                        size="lg"
-                          />
-                    </FormField>
+                    <Input
+                      label="Titre professionnel"
+                      placeholder="Développeur Web"
+                      value={formData.title || ""}
+                      onChange={(e) => handleChange("title", e.target.value)}
+                      variant="flat"
+                      radius="md"
+                      labelPlacement="outside"
+                    />
+                    <Input
+                      label="Taux horaire par défaut (€)"
+                      type="number"
+                      placeholder="75"
+                      value={formData.hourlyRate?.toString() || ""}
+                      onChange={(e) =>
+                        handleChange("hourlyRate", parseFloat(e.target.value) || 0)
+                      }
+                      variant="flat"
+                      radius="md"
+                      labelPlacement="outside"
+                    />
                   </>
                 )}
               </div>
-              <div className="mt-8">
-                <FormField label="Adresse" required>
-                  <Input
-                    placeholder="123 Rue Example"
-                    value={formData.address || ""}
-                    onChange={(e) => handleChange("address", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
+              <div className="mt-6">
+                <Input
+                  label="Adresse"
+                  isRequired
+                  placeholder="123 Rue Example"
+                  value={formData.address || ""}
+                  onChange={(e) => handleChange("address", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                <FormField label="Code postal" required>
-                  <Input
-                    placeholder="75001"
-                    value={formData.postalCode || ""}
-                    onChange={(e) => handleChange("postalCode", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Ville" required>
-                  <Input
-                    placeholder="Paris"
-                    value={formData.city || ""}
-                    onChange={(e) => handleChange("city", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Pays">
-                  <Input
-                    placeholder="France"
-                    value={formData.country || ""}
-                    onChange={(e) => handleChange("country", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <Input
+                  label="Code postal"
+                  isRequired
+                  placeholder="75001"
+                  value={formData.postalCode || ""}
+                  onChange={(e) => handleChange("postalCode", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Ville"
+                  isRequired
+                  placeholder="Paris"
+                  value={formData.city || ""}
+                  onChange={(e) => handleChange("city", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Pays"
+                  placeholder="France"
+                  value={formData.country || ""}
+                  onChange={(e) => handleChange("country", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
               </div>
             </CardBody>
           </Card>
@@ -330,39 +319,36 @@ export default function SettingsPage() {
                 <CreditCard className="w-5 h-5 text-primary-400" />
                 <h3 className="text-lg font-semibold">Coordonnées bancaires</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <FormField label="Nom de la banque">
-                  <Input
-                    placeholder="BNP Paribas"
-                    value={formData.bankName || ""}
-                    onChange={(e) => handleChange("bankName", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="BIC / SWIFT">
-                  <Input
-                    placeholder="BNPAFRPP"
-                    value={formData.bic || ""}
-                    onChange={(e) => handleChange("bic", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  label="Nom de la banque"
+                  placeholder="BNP Paribas"
+                  value={formData.bankName || ""}
+                  onChange={(e) => handleChange("bankName", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="BIC / SWIFT"
+                  placeholder="BNPAFRPP"
+                  value={formData.bic || ""}
+                  onChange={(e) => handleChange("bic", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
               </div>
-              <div className="mt-8">
-                <FormField label="IBAN">
-                  <Input
-                    placeholder="FR76 1234 5678 9012 3456 7890 123"
-                    value={formData.iban || ""}
-                    onChange={(e) => handleChange("iban", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
+              <div className="mt-6">
+                <Input
+                  label="IBAN"
+                  placeholder="FR76 1234 5678 9012 3456 7890 123"
+                  value={formData.iban || ""}
+                  onChange={(e) => handleChange("iban", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
               </div>
             </CardBody>
           </Card>
@@ -374,64 +360,60 @@ export default function SettingsPage() {
                 <FileText className="w-5 h-5 text-primary-400" />
                 <h3 className="text-lg font-semibold">Paramètres de facturation</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <FormField label="Préfixe des factures">
-                  <Input
-                    placeholder="INV"
-                    value={formData.invoicePrefix || ""}
-                    onChange={(e) => handleChange("invoicePrefix", e.target.value)}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Devise par défaut">
-                  <Select
-                    selectedKeys={[formData.defaultCurrency || "EUR"]}
-                    onSelectionChange={(keys) => {
-                      const selected = Array.from(keys)[0];
-                      if (selected) handleChange("defaultCurrency", selected.toString());
-                    }}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  >
-                    {currencies.map((currency) => (
-                      <SelectItem key={currency.value} textValue={currency.label}>
-                        {currency.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </FormField>
-                <FormField label="Taux de TVA par défaut (%)">
-                  <Input
-                    type="number"
-                    placeholder="20"
-                    value={formData.defaultTaxRate?.toString() || ""}
-                    onChange={(e) =>
-                      handleChange("defaultTaxRate", parseFloat(e.target.value) || 0)
-                    }
-                    min={0}
-                    max={100}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
-                <FormField label="Délai de paiement par défaut (jours)">
-                  <Input
-                    type="number"
-                    placeholder="30"
-                    value={formData.defaultPaymentTerms?.toString() || ""}
-                    onChange={(e) =>
-                      handleChange("defaultPaymentTerms", parseInt(e.target.value) || 30)
-                    }
-                    min={0}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                  />
-                </FormField>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  label="Préfixe des factures"
+                  placeholder="INV"
+                  value={formData.invoicePrefix || ""}
+                  onChange={(e) => handleChange("invoicePrefix", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Select
+                  label="Devise par défaut"
+                  selectedKeys={[formData.defaultCurrency || "EUR"]}
+                  onSelectionChange={(keys) => {
+                    const selected = Array.from(keys)[0];
+                    if (selected) handleChange("defaultCurrency", selected.toString());
+                  }}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                >
+                  {currencies.map((currency) => (
+                    <SelectItem key={currency.value} textValue={currency.label}>
+                      {currency.label}
+                    </SelectItem>
+                  ))}
+                </Select>
+                <Input
+                  label="Taux de TVA par défaut (%)"
+                  type="number"
+                  placeholder="20"
+                  value={formData.defaultTaxRate?.toString() || ""}
+                  onChange={(e) =>
+                    handleChange("defaultTaxRate", parseFloat(e.target.value) || 0)
+                  }
+                  min={0}
+                  max={100}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
+                <Input
+                  label="Délai de paiement par défaut (jours)"
+                  type="number"
+                  placeholder="30"
+                  value={formData.defaultPaymentTerms?.toString() || ""}
+                  onChange={(e) =>
+                    handleChange("defaultPaymentTerms", parseInt(e.target.value) || 30)
+                  }
+                  min={0}
+                  variant="flat"
+                  radius="md"
+                  labelPlacement="outside"
+                />
               </div>
             </CardBody>
           </Card>

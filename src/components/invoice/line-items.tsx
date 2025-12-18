@@ -118,9 +118,9 @@ export function LineItems({
                         updateItem(index, "description", e.target.value)
                       }
                       placeholder="Description du service ou produit"
-                      variant="bordered"
+                      variant="flat"
                       size="sm"
-                      radius="lg"
+                      radius="md"
                     />
                   </TableCell>
                   <TableCell>
@@ -136,9 +136,9 @@ export function LineItems({
                       }
                       min={0}
                       step={0.01}
-                      variant="bordered"
+                      variant="flat"
                       size="sm"
-                      radius="lg"
+                      radius="md"
                     />
                   </TableCell>
                   <TableCell>
@@ -154,9 +154,9 @@ export function LineItems({
                       }
                       min={0}
                       step={0.01}
-                      variant="bordered"
+                      variant="flat"
                       size="sm"
-                      radius="lg"
+                      radius="md"
                       startContent={
                         <span className="text-zinc-400 text-sm">€</span>
                       }
@@ -171,9 +171,9 @@ export function LineItems({
                     <Button
                       isIconOnly
                       color="danger"
-                      variant="bordered"
+                      variant="flat"
                       size="sm"
-                      radius="lg"
+                      radius="md"
                       onPress={() => removeItem(index)}
                     >
                       <Trash2 className="w-4 h-4" />

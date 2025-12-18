@@ -17,7 +17,6 @@ import {
 import { parseDate } from "@internationalized/date";
 import { Save, Eye, Building2, User } from "lucide-react";
 import { LineItems } from "./line-items";
-import { FormField } from "@/components/ui/form-field";
 import { formatCurrency, calculateInvoiceTotals, formatDateInput } from "@/lib/utils";
 import type {
   InvoiceFormData,
@@ -150,28 +149,27 @@ export function InvoiceForm({
       <Card className="glass border border-zinc-800" radius="lg">
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Client</h3>
-          <FormField label="Sélectionner un client">
-            <Select
-              placeholder="Choisir un client"
-              selectedKeys={formData.clientId ? [formData.clientId] : []}
-              onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0];
-                if (selected) handleChange("clientId", selected.toString());
-              }}
-              variant="bordered"
-              radius="lg"
-              size="lg"
-            >
-              {clients.map((client) => (
-                <SelectItem key={client.id} textValue={client.name}>
-                  <div>
-                    <p className="font-medium">{client.name}</p>
-                    <p className="text-sm text-zinc-400">{client.email}</p>
-                  </div>
-                </SelectItem>
-              ))}
-            </Select>
-          </FormField>
+          <Select
+            label="Sélectionner un client"
+            placeholder="Choisir un client"
+            selectedKeys={formData.clientId ? [formData.clientId] : []}
+            onSelectionChange={(keys) => {
+              const selected = Array.from(keys)[0];
+              if (selected) handleChange("clientId", selected.toString());
+            }}
+            variant="flat"
+            radius="md"
+            labelPlacement="outside"
+          >
+            {clients.map((client) => (
+              <SelectItem key={client.id} textValue={client.name}>
+                <div>
+                  <p className="font-medium">{client.name}</p>
+                  <p className="text-sm text-zinc-400">{client.email}</p>
+                </div>
+              </SelectItem>
+            ))}
+          </Select>
           {clients.length === 0 && (
             <p className="text-sm text-zinc-400 mt-3">
               Aucun client disponible.{" "}
@@ -188,54 +186,53 @@ export function InvoiceForm({
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Détails de la facture</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FormField label="Date d'émission" required>
-              <DatePicker
-                // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
-                value={parseDate(formData.issueDate)}
-                onChange={(date) => {
-                  if (date) {
-                    handleChange("issueDate", date.toString());
-                  }
-                }}
-                variant="bordered"
-                radius="lg"
-                size="lg"
-                showMonthAndYearPickers
-              />
-            </FormField>
-            <FormField label="Date d'échéance" required>
-              <DatePicker
-                // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
-                value={parseDate(formData.dueDate)}
-                onChange={(date) => {
-                  if (date) {
-                    handleChange("dueDate", date.toString());
-                  }
-                }}
-                variant="bordered"
-                radius="lg"
-                size="lg"
-                showMonthAndYearPickers
-              />
-            </FormField>
-            <FormField label="Devise">
-              <Select
-                selectedKeys={[formData.currency]}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0];
-                  if (selected) handleChange("currency", selected.toString());
-                }}
-                variant="bordered"
-                radius="lg"
-                size="lg"
-              >
-                {currencies.map((currency) => (
-                  <SelectItem key={currency.value} textValue={currency.label}>
-                    {currency.label}
-                  </SelectItem>
-                ))}
-              </Select>
-            </FormField>
+            <DatePicker
+              label="Date d'émission"
+              isRequired
+              // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
+              value={parseDate(formData.issueDate)}
+              onChange={(date) => {
+                if (date) {
+                  handleChange("issueDate", date.toString());
+                }
+              }}
+              variant="flat"
+              radius="md"
+              labelPlacement="outside"
+              showMonthAndYearPickers
+            />
+            <DatePicker
+              label="Date d'échéance"
+              isRequired
+              // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
+              value={parseDate(formData.dueDate)}
+              onChange={(date) => {
+                if (date) {
+                  handleChange("dueDate", date.toString());
+                }
+              }}
+              variant="flat"
+              radius="md"
+              labelPlacement="outside"
+              showMonthAndYearPickers
+            />
+            <Select
+              label="Devise"
+              selectedKeys={[formData.currency]}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0];
+                if (selected) handleChange("currency", selected.toString());
+              }}
+              variant="flat"
+              radius="md"
+              labelPlacement="outside"
+            >
+              {currencies.map((currency) => (
+                <SelectItem key={currency.value} textValue={currency.label}>
+                  {currency.label}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
         </CardBody>
       </Card>
@@ -256,36 +253,34 @@ export function InvoiceForm({
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Totaux</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-8">
-              <FormField label="Taux de TVA (%)">
-                <Input
-                  type="number"
-                  value={formData.taxRate.toString()}
-                  onChange={(e) =>
-                    handleChange("taxRate", parseFloat(e.target.value) || 0)
-                  }
-                  min={0}
-                  max={100}
-                  step={0.1}
-                  variant="bordered"
-                  radius="lg"
-                  size="lg"
-                />
-              </FormField>
-              <FormField label="Remise (€)">
-                <Input
-                  type="number"
-                  value={formData.discount.toString()}
-                  onChange={(e) =>
-                    handleChange("discount", parseFloat(e.target.value) || 0)
-                  }
-                  min={0}
-                  step={0.01}
-                  variant="bordered"
-                  radius="lg"
-                  size="lg"
-                />
-              </FormField>
+            <div className="space-y-6">
+              <Input
+                label="Taux de TVA (%)"
+                type="number"
+                value={formData.taxRate.toString()}
+                onChange={(e) =>
+                  handleChange("taxRate", parseFloat(e.target.value) || 0)
+                }
+                min={0}
+                max={100}
+                step={0.1}
+                variant="flat"
+                radius="md"
+                labelPlacement="outside"
+              />
+              <Input
+                label="Remise (€)"
+                type="number"
+                value={formData.discount.toString()}
+                onChange={(e) =>
+                  handleChange("discount", parseFloat(e.target.value) || 0)
+                }
+                min={0}
+                step={0.01}
+                variant="flat"
+                radius="md"
+                labelPlacement="outside"
+              />
             </div>
             <div className="bg-zinc-800/30 rounded-2xl p-5 space-y-3">
               <div className="flex justify-between text-zinc-400">
@@ -318,27 +313,25 @@ export function InvoiceForm({
       <Card className="glass border border-zinc-800" radius="lg">
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Notes & Conditions</h3>
-          <div className="space-y-8">
-            <FormField label="Notes pour le client">
-              <Textarea
-                placeholder="Informations supplémentaires pour le client..."
-                value={formData.notes}
-                onChange={(e) => handleChange("notes", e.target.value)}
-                variant="bordered"
-                radius="lg"
-                size="lg"
-              />
-            </FormField>
-            <FormField label="Conditions de paiement">
-              <Textarea
-                placeholder="Ex: Paiement à 30 jours..."
-                value={formData.terms}
-                onChange={(e) => handleChange("terms", e.target.value)}
-                variant="bordered"
-                radius="lg"
-                size="lg"
-              />
-            </FormField>
+          <div className="space-y-6">
+            <Textarea
+              label="Notes pour le client"
+              placeholder="Informations supplémentaires pour le client..."
+              value={formData.notes}
+              onChange={(e) => handleChange("notes", e.target.value)}
+              variant="flat"
+              radius="md"
+              labelPlacement="outside"
+            />
+            <Textarea
+              label="Conditions de paiement"
+              placeholder="Ex: Paiement à 30 jours..."
+              value={formData.terms}
+              onChange={(e) => handleChange("terms", e.target.value)}
+              variant="flat"
+              radius="md"
+              labelPlacement="outside"
+            />
           </div>
         </CardBody>
       </Card>
