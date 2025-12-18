@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/ui/navbar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Card,
-  CardBody,
-  Button,
-  Input,
-  Tabs,
-  Tab,
   Select,
+  SelectContent,
   SelectItem,
-} from "@heroui/react";
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Save,
   Building2,
@@ -134,43 +136,32 @@ export default function SettingsPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Profile Type */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardBody className="p-6">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Type de profil</h3>
               <Tabs
-                selectedKey={profileType}
-                onSelectionChange={(key) =>
-                  setProfileType(key as "BUSINESS" | "FREELANCER")
+                value={profileType}
+                onValueChange={(value) =>
+                  setProfileType(value as "BUSINESS" | "FREELANCER")
                 }
-                color="primary"
-                variant="solid"
-                radius="lg"
               >
-                <Tab
-                  key="BUSINESS"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4" />
-                      <span>Entreprise</span>
-                    </div>
-                  }
-                />
-                <Tab
-                  key="FREELANCER"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      <span>Freelancer</span>
-                    </div>
-                  }
-                />
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="BUSINESS" className="gap-2">
+                    <Building2 className="w-4 h-4" />
+                    Entreprise
+                  </TabsTrigger>
+                  <TabsTrigger value="FREELANCER" className="gap-2">
+                    <User className="w-4 h-4" />
+                    Freelancer
+                  </TabsTrigger>
+                </TabsList>
               </Tabs>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Basic Info */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardBody className="p-6">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-6">
                 <User className="w-5 h-5 text-primary-400" />
                 <h3 className="text-lg font-semibold">
@@ -179,259 +170,239 @@ export default function SettingsPage() {
                 </h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label={profileType === "BUSINESS" ? "Nom de l'entreprise" : "Nom complet"}
-                  isRequired
-                  placeholder={profileType === "BUSINESS" ? "ACME Inc." : "Jean Dupont"}
-                  value={formData.name || ""}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Email"
-                  isRequired
-                  type="email"
-                  placeholder="contact@example.com"
-                  value={formData.email || ""}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Téléphone"
-                  placeholder="+33 1 23 45 67 89"
-                  value={formData.phone || ""}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Site web"
-                  placeholder="https://example.com"
-                  value={formData.website || ""}
-                  onChange={(e) => handleChange("website", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">
+                    {profileType === "BUSINESS" ? "Nom de l'entreprise" : "Nom complet"}{" "}
+                    <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    placeholder={profileType === "BUSINESS" ? "ACME Inc." : "Jean Dupont"}
+                    value={formData.name || ""}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">
+                    Email <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type="email"
+                    placeholder="contact@example.com"
+                    value={formData.email || ""}
+                    onChange={(e) => handleChange("email", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Téléphone</Label>
+                  <Input
+                    placeholder="+33 1 23 45 67 89"
+                    value={formData.phone || ""}
+                    onChange={(e) => handleChange("phone", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Site web</Label>
+                  <Input
+                    placeholder="https://example.com"
+                    value={formData.website || ""}
+                    onChange={(e) => handleChange("website", e.target.value)}
+                  />
+                </div>
                 {profileType === "BUSINESS" && (
                   <>
-                    <Input
-                      label="Numéro TVA / SIRET"
-                      placeholder="FR12345678901"
-                      value={formData.taxId || ""}
-                      onChange={(e) => handleChange("taxId", e.target.value)}
-                      variant="flat"
-                      radius="md"
-                      labelPlacement="outside"
-                    />
-                    <Input
-                      label="Numéro RCS"
-                      placeholder="Paris B 123 456 789"
-                      value={formData.registrationNo || ""}
-                      onChange={(e) => handleChange("registrationNo", e.target.value)}
-                      variant="flat"
-                      radius="md"
-                      labelPlacement="outside"
-                    />
+                    <div className="flex flex-col gap-2">
+                      <Label className="text-zinc-400">Numéro TVA / SIRET</Label>
+                      <Input
+                        placeholder="FR12345678901"
+                        value={formData.taxId || ""}
+                        onChange={(e) => handleChange("taxId", e.target.value)}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label className="text-zinc-400">Numéro RCS</Label>
+                      <Input
+                        placeholder="Paris B 123 456 789"
+                        value={formData.registrationNo || ""}
+                        onChange={(e) => handleChange("registrationNo", e.target.value)}
+                      />
+                    </div>
                   </>
                 )}
                 {profileType === "FREELANCER" && (
                   <>
-                    <Input
-                      label="Titre professionnel"
-                      placeholder="Développeur Web"
-                      value={formData.title || ""}
-                      onChange={(e) => handleChange("title", e.target.value)}
-                      variant="flat"
-                      radius="md"
-                      labelPlacement="outside"
-                    />
-                    <Input
-                      label="Taux horaire par défaut (€)"
-                      type="number"
-                      placeholder="75"
-                      value={formData.hourlyRate?.toString() || ""}
-                      onChange={(e) =>
-                        handleChange("hourlyRate", parseFloat(e.target.value) || 0)
-                      }
-                      variant="flat"
-                      radius="md"
-                      labelPlacement="outside"
-                    />
+                    <div className="flex flex-col gap-2">
+                      <Label className="text-zinc-400">Titre professionnel</Label>
+                      <Input
+                        placeholder="Développeur Web"
+                        value={formData.title || ""}
+                        onChange={(e) => handleChange("title", e.target.value)}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label className="text-zinc-400">Taux horaire par défaut (€)</Label>
+                      <Input
+                        type="number"
+                        placeholder="75"
+                        value={formData.hourlyRate?.toString() || ""}
+                        onChange={(e) =>
+                          handleChange("hourlyRate", parseFloat(e.target.value) || 0)
+                        }
+                      />
+                    </div>
                   </>
                 )}
               </div>
               <div className="mt-6">
-                <Input
-                  label="Adresse"
-                  isRequired
-                  placeholder="123 Rue Example"
-                  value={formData.address || ""}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">
+                    Adresse <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    placeholder="123 Rue Example"
+                    value={formData.address || ""}
+                    onChange={(e) => handleChange("address", e.target.value)}
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <Input
-                  label="Code postal"
-                  isRequired
-                  placeholder="75001"
-                  value={formData.postalCode || ""}
-                  onChange={(e) => handleChange("postalCode", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Ville"
-                  isRequired
-                  placeholder="Paris"
-                  value={formData.city || ""}
-                  onChange={(e) => handleChange("city", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Pays"
-                  placeholder="France"
-                  value={formData.country || ""}
-                  onChange={(e) => handleChange("country", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">
+                    Code postal <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    placeholder="75001"
+                    value={formData.postalCode || ""}
+                    onChange={(e) => handleChange("postalCode", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">
+                    Ville <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    placeholder="Paris"
+                    value={formData.city || ""}
+                    onChange={(e) => handleChange("city", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Pays</Label>
+                  <Input
+                    placeholder="France"
+                    value={formData.country || ""}
+                    onChange={(e) => handleChange("country", e.target.value)}
+                  />
+                </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Bank Details */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardBody className="p-6">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-6">
                 <CreditCard className="w-5 h-5 text-primary-400" />
                 <h3 className="text-lg font-semibold">Coordonnées bancaires</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label="Nom de la banque"
-                  placeholder="BNP Paribas"
-                  value={formData.bankName || ""}
-                  onChange={(e) => handleChange("bankName", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="BIC / SWIFT"
-                  placeholder="BNPAFRPP"
-                  value={formData.bic || ""}
-                  onChange={(e) => handleChange("bic", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Nom de la banque</Label>
+                  <Input
+                    placeholder="BNP Paribas"
+                    value={formData.bankName || ""}
+                    onChange={(e) => handleChange("bankName", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">BIC / SWIFT</Label>
+                  <Input
+                    placeholder="BNPAFRPP"
+                    value={formData.bic || ""}
+                    onChange={(e) => handleChange("bic", e.target.value)}
+                  />
+                </div>
               </div>
               <div className="mt-6">
-                <Input
-                  label="IBAN"
-                  placeholder="FR76 1234 5678 9012 3456 7890 123"
-                  value={formData.iban || ""}
-                  onChange={(e) => handleChange("iban", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">IBAN</Label>
+                  <Input
+                    placeholder="FR76 1234 5678 9012 3456 7890 123"
+                    value={formData.iban || ""}
+                    onChange={(e) => handleChange("iban", e.target.value)}
+                  />
+                </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Invoice Settings */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardBody className="p-6">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-6">
                 <FileText className="w-5 h-5 text-primary-400" />
                 <h3 className="text-lg font-semibold">Paramètres de facturation</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label="Préfixe des factures"
-                  placeholder="INV"
-                  value={formData.invoicePrefix || ""}
-                  onChange={(e) => handleChange("invoicePrefix", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Select
-                  label="Devise par défaut"
-                  selectedKeys={[formData.defaultCurrency || "EUR"]}
-                  onSelectionChange={(keys) => {
-                    const selected = Array.from(keys)[0];
-                    if (selected) handleChange("defaultCurrency", selected.toString());
-                  }}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                >
-                  {currencies.map((currency) => (
-                    <SelectItem key={currency.value} textValue={currency.label}>
-                      {currency.label}
-                    </SelectItem>
-                  ))}
-                </Select>
-                <Input
-                  label="Taux de TVA par défaut (%)"
-                  type="number"
-                  placeholder="20"
-                  value={formData.defaultTaxRate?.toString() || ""}
-                  onChange={(e) =>
-                    handleChange("defaultTaxRate", parseFloat(e.target.value) || 0)
-                  }
-                  min={0}
-                  max={100}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Délai de paiement par défaut (jours)"
-                  type="number"
-                  placeholder="30"
-                  value={formData.defaultPaymentTerms?.toString() || ""}
-                  onChange={(e) =>
-                    handleChange("defaultPaymentTerms", parseInt(e.target.value) || 30)
-                  }
-                  min={0}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Préfixe des factures</Label>
+                  <Input
+                    placeholder="INV"
+                    value={formData.invoicePrefix || ""}
+                    onChange={(e) => handleChange("invoicePrefix", e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Devise par défaut</Label>
+                  <Select
+                    value={formData.defaultCurrency || "EUR"}
+                    onValueChange={(value) => handleChange("defaultCurrency", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((currency) => (
+                        <SelectItem key={currency.value} value={currency.value}>
+                          {currency.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Taux de TVA par défaut (%)</Label>
+                  <Input
+                    type="number"
+                    placeholder="20"
+                    value={formData.defaultTaxRate?.toString() || ""}
+                    onChange={(e) =>
+                      handleChange("defaultTaxRate", parseFloat(e.target.value) || 0)
+                    }
+                    min={0}
+                    max={100}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-zinc-400">Délai de paiement par défaut (jours)</Label>
+                  <Input
+                    type="number"
+                    placeholder="30"
+                    value={formData.defaultPaymentTerms?.toString() || ""}
+                    onChange={(e) =>
+                      handleChange("defaultPaymentTerms", parseInt(e.target.value) || 30)
+                    }
+                    min={0}
+                  />
+                </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Actions */}
           <div className="flex justify-end">
-            <Button
-              type="submit"
-              color="primary"
-              variant="shadow"
-              radius="lg"
-              className="px-6"
-              isLoading={isLoading}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Save className="w-4 h-4" />
-                Enregistrer les paramètres
-              </span>
+            <Button type="submit" disabled={isLoading}>
+              <Save className="w-4 h-4 mr-2" />
+              {isLoading ? "Enregistrement..." : "Enregistrer les paramètres"}
             </Button>
           </div>
         </form>

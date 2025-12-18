@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/ui/navbar";
 import { InvoiceForm } from "@/components/invoice/invoice-form";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { InvoiceFormData, Client } from "@/types/invoice";
@@ -63,17 +63,11 @@ export default function NewInvoicePage() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <Button
-            as={Link}
-            href="/invoices"
-            variant="light"
-            radius="lg"
-            className="mb-4"
-          >
-            <span className="inline-flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" />
+          <Button variant="ghost" asChild className="mb-4">
+            <Link href="/invoices">
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Retour aux factures
-            </span>
+            </Link>
           </Button>
           <h1 className="text-3xl font-bold gradient-text mb-2">
             Nouvelle Facture
