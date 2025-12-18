@@ -89,45 +89,51 @@ export default function NewClientPage() {
                 <h3 className="text-lg font-semibold">Informations de contact</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label="Nom complet"
-                  isRequired
-                  placeholder="Jean Dupont"
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Email"
-                  isRequired
-                  type="email"
-                  placeholder="jean@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Téléphone"
-                  placeholder="+33 6 12 34 56 78"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Contact (si entreprise)"
-                  placeholder="Nom du contact"
-                  value={formData.contactName}
-                  onChange={(e) => handleChange("contactName", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">
+                    Nom complet <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    placeholder="Jean Dupont"
+                    value={formData.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">
+                    Email <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="jean@example.com"
+                    value={formData.email}
+                    onChange={(e) => handleChange("email", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">Téléphone</label>
+                  <Input
+                    placeholder="+33 6 12 34 56 78"
+                    value={formData.phone}
+                    onChange={(e) => handleChange("phone", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">Contact (si entreprise)</label>
+                  <Input
+                    placeholder="Nom du contact"
+                    value={formData.contactName}
+                    onChange={(e) => handleChange("contactName", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
               </div>
             </CardBody>
           </Card>
@@ -140,46 +146,53 @@ export default function NewClientPage() {
                 <h3 className="text-lg font-semibold">Adresse</h3>
               </div>
               <div className="space-y-6">
-                <Input
-                  label="Adresse"
-                  isRequired
-                  placeholder="123 Rue Example"
-                  value={formData.address}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">
+                    Adresse <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    placeholder="123 Rue Example"
+                    value={formData.address}
+                    onChange={(e) => handleChange("address", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Input
-                    label="Code postal"
-                    isRequired
-                    placeholder="75001"
-                    value={formData.postalCode}
-                    onChange={(e) => handleChange("postalCode", e.target.value)}
-                    variant="flat"
-                    radius="md"
-                    labelPlacement="outside"
-                  />
-                  <Input
-                    label="Ville"
-                    isRequired
-                    placeholder="Paris"
-                    value={formData.city}
-                    onChange={(e) => handleChange("city", e.target.value)}
-                    variant="flat"
-                    radius="md"
-                    labelPlacement="outside"
-                  />
-                  <Input
-                    label="Pays"
-                    placeholder="France"
-                    value={formData.country}
-                    onChange={(e) => handleChange("country", e.target.value)}
-                    variant="flat"
-                    radius="md"
-                    labelPlacement="outside"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-zinc-400">
+                      Code postal <span className="text-danger">*</span>
+                    </label>
+                    <Input
+                      placeholder="75001"
+                      value={formData.postalCode}
+                      onChange={(e) => handleChange("postalCode", e.target.value)}
+                      variant="flat"
+                      radius="md"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-zinc-400">
+                      Ville <span className="text-danger">*</span>
+                    </label>
+                    <Input
+                      placeholder="Paris"
+                      value={formData.city}
+                      onChange={(e) => handleChange("city", e.target.value)}
+                      variant="flat"
+                      radius="md"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-zinc-400">Pays</label>
+                    <Input
+                      placeholder="France"
+                      value={formData.country}
+                      onChange={(e) => handleChange("country", e.target.value)}
+                      variant="flat"
+                      radius="md"
+                    />
+                  </div>
                 </div>
               </div>
             </CardBody>
@@ -193,24 +206,26 @@ export default function NewClientPage() {
                 <h3 className="text-lg font-semibold">Informations entreprise (optionnel)</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label="Nom de l'entreprise"
-                  placeholder="ACME Inc."
-                  value={formData.companyName}
-                  onChange={(e) => handleChange("companyName", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
-                <Input
-                  label="Numéro de TVA / SIRET"
-                  placeholder="FR12345678901"
-                  value={formData.taxId}
-                  onChange={(e) => handleChange("taxId", e.target.value)}
-                  variant="flat"
-                  radius="md"
-                  labelPlacement="outside"
-                />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">Nom de l'entreprise</label>
+                  <Input
+                    placeholder="ACME Inc."
+                    value={formData.companyName}
+                    onChange={(e) => handleChange("companyName", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm text-zinc-400">Numéro de TVA / SIRET</label>
+                  <Input
+                    placeholder="FR12345678901"
+                    value={formData.taxId}
+                    onChange={(e) => handleChange("taxId", e.target.value)}
+                    variant="flat"
+                    radius="md"
+                  />
+                </div>
               </div>
             </CardBody>
           </Card>
@@ -222,15 +237,16 @@ export default function NewClientPage() {
                 <FileText className="w-5 h-5 text-primary-400" />
                 <h3 className="text-lg font-semibold">Notes</h3>
               </div>
-              <Textarea
-                label="Notes internes"
-                placeholder="Notes sur ce client..."
-                value={formData.notes}
-                onChange={(e) => handleChange("notes", e.target.value)}
-                variant="flat"
-                radius="md"
-                labelPlacement="outside"
-              />
+              <div className="flex flex-col gap-2">
+                <label className="text-sm text-zinc-400">Notes internes</label>
+                <Textarea
+                  placeholder="Notes sur ce client..."
+                  value={formData.notes}
+                  onChange={(e) => handleChange("notes", e.target.value)}
+                  variant="flat"
+                  radius="md"
+                />
+              </div>
             </CardBody>
           </Card>
 
