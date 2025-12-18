@@ -115,8 +115,14 @@ export function InvoiceForm({
             selectedKey={invoiceType}
             onSelectionChange={(key) => handleTypeChange(key as InvoiceType)}
             color="primary"
-            variant="solid"
-            radius="lg"
+            variant="bordered"
+            radius="md"
+            classNames={{
+              tabList: "bg-zinc-900 p-1 gap-2",
+              cursor: "bg-primary-500",
+              tab: "px-4 py-2",
+              tabContent: "group-data-[selected=true]:text-white",
+            }}
           >
             <Tab
               key="BUSINESS"
