@@ -149,27 +149,28 @@ export function InvoiceForm({
       <Card className="glass border border-zinc-800" radius="lg">
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Client</h3>
-          <Select
-            label="Sélectionner un client"
-            placeholder="Choisir un client"
-            selectedKeys={formData.clientId ? [formData.clientId] : []}
-            onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0];
-              if (selected) handleChange("clientId", selected.toString());
-            }}
-            variant="flat"
-            radius="md"
-            labelPlacement="outside"
-          >
-            {clients.map((client) => (
-              <SelectItem key={client.id} textValue={client.name}>
-                <div>
-                  <p className="font-medium">{client.name}</p>
-                  <p className="text-sm text-zinc-400">{client.email}</p>
-                </div>
-              </SelectItem>
-            ))}
-          </Select>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-zinc-400">Sélectionner un client</label>
+            <Select
+              placeholder="Choisir un client"
+              selectedKeys={formData.clientId ? [formData.clientId] : []}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0];
+                if (selected) handleChange("clientId", selected.toString());
+              }}
+              variant="flat"
+              radius="md"
+            >
+              {clients.map((client) => (
+                <SelectItem key={client.id} textValue={client.name}>
+                  <div>
+                    <p className="font-medium">{client.name}</p>
+                    <p className="text-sm text-zinc-400">{client.email}</p>
+                  </div>
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
           {clients.length === 0 && (
             <p className="text-sm text-zinc-400 mt-3">
               Aucun client disponible.{" "}
@@ -185,54 +186,59 @@ export function InvoiceForm({
       <Card className="glass border border-zinc-800" radius="lg">
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Détails de la facture</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <DatePicker
-              label="Date d'émission"
-              isRequired
-              // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
-              value={parseDate(formData.issueDate)}
-              onChange={(date) => {
-                if (date) {
-                  handleChange("issueDate", date.toString());
-                }
-              }}
-              variant="flat"
-              radius="md"
-              labelPlacement="outside"
-              showMonthAndYearPickers
-            />
-            <DatePicker
-              label="Date d'échéance"
-              isRequired
-              // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
-              value={parseDate(formData.dueDate)}
-              onChange={(date) => {
-                if (date) {
-                  handleChange("dueDate", date.toString());
-                }
-              }}
-              variant="flat"
-              radius="md"
-              labelPlacement="outside"
-              showMonthAndYearPickers
-            />
-            <Select
-              label="Devise"
-              selectedKeys={[formData.currency]}
-              onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0];
-                if (selected) handleChange("currency", selected.toString());
-              }}
-              variant="flat"
-              radius="md"
-              labelPlacement="outside"
-            >
-              {currencies.map((currency) => (
-                <SelectItem key={currency.value} textValue={currency.label}>
-                  {currency.label}
-                </SelectItem>
-              ))}
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-zinc-400">
+                Date d'émission <span className="text-danger">*</span>
+              </label>
+              <DatePicker
+                // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
+                value={parseDate(formData.issueDate)}
+                onChange={(date) => {
+                  if (date) {
+                    handleChange("issueDate", date.toString());
+                  }
+                }}
+                variant="flat"
+                radius="md"
+                showMonthAndYearPickers
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-zinc-400">
+                Date d'échéance <span className="text-danger">*</span>
+              </label>
+              <DatePicker
+                // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
+                value={parseDate(formData.dueDate)}
+                onChange={(date) => {
+                  if (date) {
+                    handleChange("dueDate", date.toString());
+                  }
+                }}
+                variant="flat"
+                radius="md"
+                showMonthAndYearPickers
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-zinc-400">Devise</label>
+              <Select
+                selectedKeys={[formData.currency]}
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0];
+                  if (selected) handleChange("currency", selected.toString());
+                }}
+                variant="flat"
+                radius="md"
+              >
+                {currencies.map((currency) => (
+                  <SelectItem key={currency.value} textValue={currency.label}>
+                    {currency.label}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
           </div>
         </CardBody>
       </Card>
@@ -254,33 +260,35 @@ export function InvoiceForm({
           <h3 className="text-lg font-semibold mb-6">Totaux</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <Input
-                label="Taux de TVA (%)"
-                type="number"
-                value={formData.taxRate.toString()}
-                onChange={(e) =>
-                  handleChange("taxRate", parseFloat(e.target.value) || 0)
-                }
-                min={0}
-                max={100}
-                step={0.1}
-                variant="flat"
-                radius="md"
-                labelPlacement="outside"
-              />
-              <Input
-                label="Remise (€)"
-                type="number"
-                value={formData.discount.toString()}
-                onChange={(e) =>
-                  handleChange("discount", parseFloat(e.target.value) || 0)
-                }
-                min={0}
-                step={0.01}
-                variant="flat"
-                radius="md"
-                labelPlacement="outside"
-              />
+              <div className="flex flex-col gap-2">
+                <label className="text-sm text-zinc-400">Taux de TVA (%)</label>
+                <Input
+                  type="number"
+                  value={formData.taxRate.toString()}
+                  onChange={(e) =>
+                    handleChange("taxRate", parseFloat(e.target.value) || 0)
+                  }
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  variant="flat"
+                  radius="md"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm text-zinc-400">Remise (€)</label>
+                <Input
+                  type="number"
+                  value={formData.discount.toString()}
+                  onChange={(e) =>
+                    handleChange("discount", parseFloat(e.target.value) || 0)
+                  }
+                  min={0}
+                  step={0.01}
+                  variant="flat"
+                  radius="md"
+                />
+              </div>
             </div>
             <div className="bg-zinc-800/30 rounded-2xl p-5 space-y-3">
               <div className="flex justify-between text-zinc-400">
@@ -314,24 +322,26 @@ export function InvoiceForm({
         <CardBody className="p-6">
           <h3 className="text-lg font-semibold mb-6">Notes & Conditions</h3>
           <div className="space-y-6">
-            <Textarea
-              label="Notes pour le client"
-              placeholder="Informations supplémentaires pour le client..."
-              value={formData.notes}
-              onChange={(e) => handleChange("notes", e.target.value)}
-              variant="flat"
-              radius="md"
-              labelPlacement="outside"
-            />
-            <Textarea
-              label="Conditions de paiement"
-              placeholder="Ex: Paiement à 30 jours..."
-              value={formData.terms}
-              onChange={(e) => handleChange("terms", e.target.value)}
-              variant="flat"
-              radius="md"
-              labelPlacement="outside"
-            />
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-zinc-400">Notes pour le client</label>
+              <Textarea
+                placeholder="Informations supplémentaires pour le client..."
+                value={formData.notes}
+                onChange={(e) => handleChange("notes", e.target.value)}
+                variant="flat"
+                radius="md"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-zinc-400">Conditions de paiement</label>
+              <Textarea
+                placeholder="Ex: Paiement à 30 jours..."
+                value={formData.terms}
+                onChange={(e) => handleChange("terms", e.target.value)}
+                variant="flat"
+                radius="md"
+              />
+            </div>
           </div>
         </CardBody>
       </Card>
