@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { FileText, Euro, Clock, AlertCircle } from "lucide-react";
 
@@ -39,8 +39,8 @@ export function StatsCard({
   };
 
   return (
-    <Card className="glass border border-zinc-800 hover:border-primary-500/30 transition-all" radius="lg">
-      <CardBody className="p-6">
+    <Card className="glass border border-zinc-800 hover:border-primary-500/30 transition-all rounded-lg">
+      <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-zinc-400 mb-1">{title}</p>
@@ -61,7 +61,7 @@ export function StatsCard({
             <Icon className="w-6 h-6" />
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

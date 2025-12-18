@@ -1,18 +1,16 @@
 "use client";
 
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
-  Card,
-  CardHeader,
-  CardBody,
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
+  TableHead,
   TableCell,
-  Chip,
-  Button,
-} from "@heroui/react";
+} from "@/components/ui/table";
 import { ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
 import {
@@ -27,58 +25,51 @@ interface RecentInvoicesProps {
   invoices: Invoice[];
 }
 
+const statusVariantMap: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  DRAFT: "secondary",
+  SENT: "default",
+  PAID: "default",
+  OVERDUE: "destructive",
+  CANCELLED: "secondary",
+};
+
 export function RecentInvoices({ invoices }: RecentInvoicesProps) {
   return (
-    <Card className="glass border border-zinc-800" radius="lg">
-      <CardHeader className="flex justify-between items-center px-6 py-4">
+    <Card className="glass border border-zinc-800 rounded-lg">
+      <CardHeader className="flex flex-row justify-between items-center px-6 py-4">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-primary-400" />
           <h3 className="text-lg font-semibold">Factures Récentes</h3>
         </div>
-        <Button
-          as={Link}
-          href="/invoices"
-          variant="light"
-          size="sm"
-          radius="full"
-        >
-          <span className="inline-flex items-center gap-2">
+        <Button asChild variant="ghost" size="sm" className="rounded-full">
+          <Link href="/invoices">
             Voir tout
-            <ExternalLink className="w-4 h-4" />
-          </span>
+            <ExternalLink className="w-4 h-4 ml-2" />
+          </Link>
         </Button>
       </CardHeader>
-      <CardBody className="px-0 py-0">
+      <CardContent className="px-0 py-0">
         {invoices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-zinc-400">
             <FileText className="w-12 h-12 mb-4 opacity-50" />
             <p>Aucune facture pour le moment</p>
-            <Button
-              as={Link}
-              href="/invoices/new"
-              color="primary"
-              variant="shadow"
-              radius="full"
-              className="mt-4"
-            >
-              <span className="inline-flex items-center gap-2">
-                <FileText className="w-4 h-4" />
+            <Button asChild className="mt-4 rounded-full">
+              <Link href="/invoices/new">
+                <FileText className="w-4 h-4 mr-2" />
                 Créer une facture
-              </span>
+              </Link>
             </Button>
           </div>
         ) : (
-          <Table
-            aria-label="Recent invoices"
-            removeWrapper
-            className="min-w-full"
-          >
+          <Table>
             <TableHeader>
-              <TableColumn>Numéro</TableColumn>
-              <TableColumn>Client</TableColumn>
-              <TableColumn>Date</TableColumn>
-              <TableColumn>Montant</TableColumn>
-              <TableColumn>Statut</TableColumn>
+              <TableRow>
+                <TableHead>Numéro</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Montant</TableHead>
+                <TableHead>Statut</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {invoices.map((invoice) => (
@@ -102,20 +93,16 @@ export function RecentInvoices({ invoices }: RecentInvoicesProps) {
                     {formatCurrency(invoice.total, invoice.currency)}
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      size="sm"
-                      color={getStatusColor(invoice.status)}
-                      variant="flat"
-                    >
+                    <Badge variant={statusVariantMap[invoice.status] || "secondary"}>
                       {getStatusLabel(invoice.status)}
-                    </Chip>
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

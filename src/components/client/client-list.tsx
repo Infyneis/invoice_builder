@@ -1,16 +1,15 @@
 "use client";
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardBody,
-  Button,
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
+  TableHead,
   TableCell,
-} from "@heroui/react";
+} from "@/components/ui/table";
 import { Plus, Users, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
 import type { Client } from "@/types/invoice";
@@ -21,8 +20,8 @@ interface ClientListProps {
 
 export function ClientList({ clients }: ClientListProps) {
   return (
-    <Card className="glass border border-zinc-800" radius="lg">
-      <CardBody className="p-0">
+    <Card className="glass border border-zinc-800 rounded-lg">
+      <CardContent className="p-0">
         {clients.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-400">
             <Users className="w-16 h-16 mb-4 opacity-50" />
@@ -30,26 +29,22 @@ export function ClientList({ clients }: ClientListProps) {
             <p className="text-sm mb-4">
               Ajoutez votre premier client pour créer des factures
             </p>
-            <Button
-              as={Link}
-              href="/clients/new"
-              color="primary"
-              variant="shadow"
-              radius="full"
-            >
-              <span className="inline-flex items-center gap-2">
-                <Plus className="w-4 h-4" />
+            <Button asChild className="rounded-full">
+              <Link href="/clients/new">
+                <Plus className="w-4 h-4 mr-2" />
                 Ajouter un client
-              </span>
+              </Link>
             </Button>
           </div>
         ) : (
-          <Table aria-label="Clients" removeWrapper>
+          <Table>
             <TableHeader>
-              <TableColumn>Nom</TableColumn>
-              <TableColumn>Contact</TableColumn>
-              <TableColumn>Adresse</TableColumn>
-              <TableColumn>Entreprise</TableColumn>
+              <TableRow>
+                <TableHead>Nom</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Adresse</TableHead>
+                <TableHead>Entreprise</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {clients.map((client) => (
@@ -94,7 +89,7 @@ export function ClientList({ clients }: ClientListProps) {
             </TableBody>
           </Table>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

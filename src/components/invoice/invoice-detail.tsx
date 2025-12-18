@@ -1,20 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Chip,
-  Divider,
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
+  TableHead,
   TableCell,
-} from "@heroui/react";
+} from "@/components/ui/table";
 import {
   ArrowLeft,
   Download,
@@ -27,7 +25,6 @@ import {
 import {
   formatCurrency,
   formatDate,
-  getStatusColor,
   getStatusLabel,
 } from "@/lib/utils";
 import type { Invoice, Client, InvoiceItem } from "@/types/invoice";
@@ -36,64 +33,52 @@ interface InvoiceDetailProps {
   invoice: Invoice & { client: Client | null; items: InvoiceItem[] };
 }
 
+const statusVariantMap: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  DRAFT: "secondary",
+  SENT: "default",
+  PAID: "default",
+  OVERDUE: "destructive",
+  CANCELLED: "secondary",
+};
+
 export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <Button
-            as={Link}
-            href="/invoices"
-            variant="light"
-            radius="lg"
-            className="mb-4"
-          >
-            <span className="inline-flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" />
+          <Button asChild variant="ghost" className="mb-4">
+            <Link href="/invoices">
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Retour aux factures
-            </span>
+            </Link>
           </Button>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold gradient-text">
               {invoice.number}
             </h1>
-            <Chip
-              color={getStatusColor(invoice.status)}
-              variant="flat"
-              size="lg"
-            >
+            <Badge variant={statusVariantMap[invoice.status] || "secondary"} className="text-sm">
               {getStatusLabel(invoice.status)}
-            </Chip>
+            </Badge>
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
-            as={Link}
-            href={`/api/pdf/${invoice.id}`}
-            color="secondary"
-            variant="flat"
-            radius="lg"
-          >
-            <span className="inline-flex items-center gap-2">
-              <Download className="w-4 h-4" />
+          <Button asChild variant="secondary">
+            <Link href={`/api/pdf/${invoice.id}`}>
+              <Download className="w-4 h-4 mr-2" />
               Télécharger PDF
-            </span>
+            </Link>
           </Button>
           {invoice.status === "DRAFT" && (
-            <Button color="primary" variant="shadow" radius="lg">
-              <span className="inline-flex items-center gap-2">
-                <Send className="w-4 h-4" />
-                Marquer envoyée
-              </span>
+            <Button>
+              <Send className="w-4 h-4 mr-2" />
+              Marquer envoyée
             </Button>
           )}
           {invoice.status === "SENT" && (
-            <Button color="success" variant="shadow" radius="lg">
-              <span className="inline-flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />
-                Marquer payée
-              </span>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Marquer payée
             </Button>
           )}
         </div>
@@ -103,14 +88,12 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Client Info */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardHeader className="flex gap-3">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardHeader className="flex flex-row gap-3 items-center">
               <User className="w-5 h-5 text-primary-400" />
-              <div className="flex flex-col">
-                <p className="text-md font-semibold">Client</p>
-              </div>
+              <p className="text-md font-semibold">Client</p>
             </CardHeader>
-            <CardBody className="pt-0">
+            <CardContent className="pt-0">
               <p className="font-semibold text-lg">{invoice.client?.name}</p>
               {invoice.client?.companyName && (
                 <p className="text-zinc-400">{invoice.client.companyName}</p>
@@ -123,24 +106,24 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
                 {invoice.client?.country}
               </p>
               <p className="text-zinc-400 mt-2">{invoice.client?.email}</p>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Invoice Items */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardHeader className="flex gap-3">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardHeader className="flex flex-row gap-3 items-center">
               <FileText className="w-5 h-5 text-primary-400" />
-              <div className="flex flex-col">
-                <p className="text-md font-semibold">Lignes de facture</p>
-              </div>
+              <p className="text-md font-semibold">Lignes de facture</p>
             </CardHeader>
-            <CardBody className="pt-0 px-0">
-              <Table aria-label="Invoice items" removeWrapper>
+            <CardContent className="pt-0 px-0">
+              <Table>
                 <TableHeader>
-                  <TableColumn>Description</TableColumn>
-                  <TableColumn className="text-center">Qté</TableColumn>
-                  <TableColumn className="text-right">Prix unit.</TableColumn>
-                  <TableColumn className="text-right">Montant</TableColumn>
+                  <TableRow>
+                    <TableHead>Description</TableHead>
+                    <TableHead className="text-center">Qté</TableHead>
+                    <TableHead className="text-right">Prix unit.</TableHead>
+                    <TableHead className="text-right">Montant</TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {invoice.items.map((item, index) => (
@@ -159,30 +142,30 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
                   ))}
                 </TableBody>
               </Table>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Notes */}
           {invoice.notes && (
-            <Card className="glass border border-zinc-800" radius="lg">
-              <CardBody>
+            <Card className="glass border border-zinc-800 rounded-lg">
+              <CardContent className="p-6">
                 <h3 className="font-semibold mb-2">Notes</h3>
                 <p className="text-zinc-400 whitespace-pre-wrap">
                   {invoice.notes}
                 </p>
-              </CardBody>
+              </CardContent>
             </Card>
           )}
 
           {/* Terms */}
           {invoice.terms && (
-            <Card className="glass border border-zinc-800" radius="lg">
-              <CardBody>
+            <Card className="glass border border-zinc-800 rounded-lg">
+              <CardContent className="p-6">
                 <h3 className="font-semibold mb-2">Conditions de paiement</h3>
                 <p className="text-zinc-400 whitespace-pre-wrap">
                   {invoice.terms}
                 </p>
-              </CardBody>
+              </CardContent>
             </Card>
           )}
         </div>
@@ -190,14 +173,12 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Dates */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardHeader className="flex gap-3">
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardHeader className="flex flex-row gap-3 items-center">
               <Calendar className="w-5 h-5 text-primary-400" />
-              <div className="flex flex-col">
-                <p className="text-md font-semibold">Dates</p>
-              </div>
+              <p className="text-md font-semibold">Dates</p>
             </CardHeader>
-            <CardBody className="pt-0 space-y-3">
+            <CardContent className="pt-0 space-y-3">
               <div>
                 <p className="text-sm text-zinc-400">Date d&apos;émission</p>
                 <p className="font-medium">{formatDate(invoice.issueDate)}</p>
@@ -214,12 +195,12 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
                   </p>
                 </div>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Totals */}
-          <Card className="glass border border-primary-500/20" radius="lg">
-            <CardBody className="space-y-3">
+          <Card className="glass border border-primary-500/20 rounded-lg">
+            <CardContent className="p-6 space-y-3">
               <div className="flex justify-between text-zinc-400">
                 <span>Sous-total</span>
                 <span>
@@ -240,24 +221,24 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
                   {formatCurrency(invoice.taxAmount, invoice.currency)}
                 </span>
               </div>
-              <Divider className="bg-zinc-700" />
+              <Separator className="bg-zinc-700" />
               <div className="flex justify-between text-xl font-bold">
                 <span>Total</span>
                 <span className="text-primary-400">
                   {formatCurrency(invoice.total, invoice.currency)}
                 </span>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Type */}
-          <Card className="glass border border-zinc-800" radius="lg">
-            <CardBody>
+          <Card className="glass border border-zinc-800 rounded-lg">
+            <CardContent className="p-6">
               <p className="text-sm text-zinc-400 mb-1">Type de facture</p>
               <p className="font-medium">
                 {invoice.type === "BUSINESS" ? "Entreprise" : "Freelancer"}
               </p>
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
       </div>

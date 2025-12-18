@@ -1,23 +1,21 @@
 "use client";
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
+  TableHead,
   TableCell,
-} from "@heroui/react";
+} from "@/components/ui/table";
 import { Plus, FileText, Download, Eye } from "lucide-react";
 import Link from "next/link";
 import {
   formatCurrency,
   formatDate,
-  getStatusColor,
   getStatusLabel,
 } from "@/lib/utils";
 import type { Invoice, Client } from "@/types/invoice";
@@ -26,10 +24,18 @@ interface InvoiceListProps {
   invoices: (Invoice & { client: Client | null })[];
 }
 
+const statusVariantMap: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  DRAFT: "secondary",
+  SENT: "default",
+  PAID: "default",
+  OVERDUE: "destructive",
+  CANCELLED: "secondary",
+};
+
 export function InvoiceList({ invoices }: InvoiceListProps) {
   return (
-    <Card className="glass border border-zinc-800" radius="lg">
-      <CardBody className="p-0">
+    <Card className="glass border border-zinc-800 rounded-lg">
+      <CardContent className="p-0">
         {invoices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-400">
             <FileText className="w-16 h-16 mb-4 opacity-50" />
@@ -37,29 +43,25 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
             <p className="text-sm mb-4">
               Créez votre première facture pour commencer
             </p>
-            <Button
-              as={Link}
-              href="/invoices/new"
-              color="primary"
-              variant="shadow"
-              radius="full"
-            >
-              <span className="inline-flex items-center gap-2">
-                <Plus className="w-4 h-4" />
+            <Button asChild className="rounded-full">
+              <Link href="/invoices/new">
+                <Plus className="w-4 h-4 mr-2" />
                 Créer une facture
-              </span>
+              </Link>
             </Button>
           </div>
         ) : (
-          <Table aria-label="Invoices" removeWrapper>
+          <Table>
             <TableHeader>
-              <TableColumn>Numéro</TableColumn>
-              <TableColumn>Client</TableColumn>
-              <TableColumn>Date</TableColumn>
-              <TableColumn>Échéance</TableColumn>
-              <TableColumn>Montant</TableColumn>
-              <TableColumn>Statut</TableColumn>
-              <TableColumn>Actions</TableColumn>
+              <TableRow>
+                <TableHead>Numéro</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Échéance</TableHead>
+                <TableHead>Montant</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {invoices.map((invoice) => (
@@ -92,36 +94,21 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
                     {formatCurrency(invoice.total, invoice.currency)}
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      size="sm"
-                      color={getStatusColor(invoice.status)}
-                      variant="flat"
-                    >
+                    <Badge variant={statusVariantMap[invoice.status] || "secondary"}>
                       {getStatusLabel(invoice.status)}
-                    </Chip>
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button
-                        as={Link}
-                        href={`/invoices/${invoice.id}`}
-                        size="sm"
-                        variant="flat"
-                        radius="lg"
-                        isIconOnly
-                      >
-                        <Eye className="w-4 h-4" />
+                      <Button asChild variant="secondary" size="icon">
+                        <Link href={`/invoices/${invoice.id}`}>
+                          <Eye className="w-4 h-4" />
+                        </Link>
                       </Button>
-                      <Button
-                        as={Link}
-                        href={`/api/pdf/${invoice.id}`}
-                        size="sm"
-                        variant="flat"
-                        color="primary"
-                        radius="lg"
-                        isIconOnly
-                      >
-                        <Download className="w-4 h-4" />
+                      <Button asChild variant="secondary" size="icon">
+                        <Link href={`/api/pdf/${invoice.id}`}>
+                          <Download className="w-4 h-4" />
+                        </Link>
                       </Button>
                     </div>
                   </TableCell>
@@ -130,7 +117,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
             </TableBody>
           </Table>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

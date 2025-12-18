@@ -1,23 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Card,
-  CardBody,
-  Button,
-  Input,
-  Textarea,
   Select,
+  SelectContent,
   SelectItem,
-  Tabs,
-  Tab,
-  Divider,
-  DatePicker,
-} from "@heroui/react";
-import { parseDate } from "@internationalized/date";
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Save, Eye, Building2, User } from "lucide-react";
 import { LineItems } from "./line-items";
-import { formatCurrency, calculateInvoiceTotals, formatDateInput } from "@/lib/utils";
+import { formatCurrency, calculateInvoiceTotals } from "@/lib/utils";
 import type {
   InvoiceFormData,
   InvoiceItemFormData,
@@ -41,6 +42,14 @@ const currencies = [
   { value: "CAD", label: "CAD ($)" },
 ];
 
+const formatDateForForm = (date: Date): string => {
+  return date.toISOString().split("T")[0];
+};
+
+const parseDateFromForm = (dateStr: string): Date => {
+  return new Date(dateStr);
+};
+
 export function InvoiceForm({
   clients,
   onSubmit,
@@ -55,10 +64,10 @@ export function InvoiceForm({
     clientId: initialData?.clientId || "",
     type: initialData?.type || "BUSINESS",
     currency: initialData?.currency || "EUR",
-    issueDate: initialData?.issueDate || formatDateInput(new Date()),
+    issueDate: initialData?.issueDate || formatDateForForm(new Date()),
     dueDate:
       initialData?.dueDate ||
-      formatDateInput(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
+      formatDateForForm(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
     taxRate: initialData?.taxRate ?? 20,
     discount: initialData?.discount || 0,
     notes: initialData?.notes || "",
@@ -86,9 +95,9 @@ export function InvoiceForm({
     setFormData((prev) => ({ ...prev, items }));
   };
 
-  const handleTypeChange = (type: InvoiceType) => {
-    setInvoiceType(type);
-    setFormData((prev) => ({ ...prev, type }));
+  const handleTypeChange = (type: string) => {
+    setInvoiceType(type as InvoiceType);
+    setFormData((prev) => ({ ...prev, type: type as InvoiceType }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,73 +117,52 @@ export function InvoiceForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Invoice Type Selector */}
-      <Card className="glass border border-zinc-800" radius="lg">
-        <CardBody className="p-6">
+      <Card className="glass border border-zinc-800 rounded-lg">
+        <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-4">Type de facture</h3>
-          <Tabs
-            selectedKey={invoiceType}
-            onSelectionChange={(key) => handleTypeChange(key as InvoiceType)}
-            color="primary"
-            variant="bordered"
-            radius="md"
-            classNames={{
-              tabList: "bg-zinc-900 p-1 gap-2",
-              cursor: "bg-primary-500",
-              tab: "px-4 py-2",
-              tabContent: "group-data-[selected=true]:text-white",
-            }}
-          >
-            <Tab
-              key="BUSINESS"
-              title={
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4" />
-                  <span>Entreprise</span>
-                </div>
-              }
-            />
-            <Tab
-              key="FREELANCER"
-              title={
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  <span>Freelancer</span>
-                </div>
-              }
-            />
+          <Tabs value={invoiceType} onValueChange={handleTypeChange}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="BUSINESS" className="gap-2">
+                <Building2 className="w-4 h-4" />
+                Entreprise
+              </TabsTrigger>
+              <TabsTrigger value="FREELANCER" className="gap-2">
+                <User className="w-4 h-4" />
+                Freelancer
+              </TabsTrigger>
+            </TabsList>
           </Tabs>
           <p className="text-sm text-zinc-400 mt-3">
             {invoiceType === "BUSINESS"
               ? "Facture complète avec informations entreprise, TVA et numéro SIRET."
               : "Facture simplifiée pour les indépendants avec taux horaire."}
           </p>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Client Selection */}
-      <Card className="glass border border-zinc-800" radius="lg">
-        <CardBody className="p-6">
+      <Card className="glass border border-zinc-800 rounded-lg">
+        <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-6">Client</h3>
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-zinc-400">Sélectionner un client</label>
+            <Label className="text-zinc-400">Sélectionner un client</Label>
             <Select
-              placeholder="Choisir un client"
-              selectedKeys={formData.clientId ? [formData.clientId] : []}
-              onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0];
-                if (selected) handleChange("clientId", selected.toString());
-              }}
-              variant="flat"
-              radius="md"
+              value={formData.clientId}
+              onValueChange={(value) => handleChange("clientId", value)}
             >
-              {clients.map((client) => (
-                <SelectItem key={client.id} textValue={client.name}>
-                  <div>
-                    <p className="font-medium">{client.name}</p>
-                    <p className="text-sm text-zinc-400">{client.email}</p>
-                  </div>
-                </SelectItem>
-              ))}
+              <SelectTrigger>
+                <SelectValue placeholder="Choisir un client" />
+              </SelectTrigger>
+              <SelectContent>
+                {clients.map((client) => (
+                  <SelectItem key={client.id} value={client.id}>
+                    <div>
+                      <p className="font-medium">{client.name}</p>
+                      <p className="text-sm text-zinc-400">{client.email}</p>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
           {clients.length === 0 && (
@@ -185,89 +173,81 @@ export function InvoiceForm({
               </a>
             </p>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Invoice Details */}
-      <Card className="glass border border-zinc-800" radius="lg">
-        <CardBody className="p-6">
+      <Card className="glass border border-zinc-800 rounded-lg">
+        <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-6">Détails de la facture</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-zinc-400">
-                Date d'émission <span className="text-danger">*</span>
-              </label>
+              <Label className="text-zinc-400">
+                Date d&apos;émission <span className="text-red-500">*</span>
+              </Label>
               <DatePicker
-                // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
-                value={parseDate(formData.issueDate)}
+                value={parseDateFromForm(formData.issueDate)}
                 onChange={(date) => {
                   if (date) {
-                    handleChange("issueDate", date.toString());
+                    handleChange("issueDate", formatDateForForm(date));
                   }
                 }}
-                variant="flat"
-                radius="md"
-                showMonthAndYearPickers
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-zinc-400">
-                Date d'échéance <span className="text-danger">*</span>
-              </label>
+              <Label className="text-zinc-400">
+                Date d&apos;échéance <span className="text-red-500">*</span>
+              </Label>
               <DatePicker
-                // @ts-expect-error - HeroUI DatePicker type issue with CalendarDate
-                value={parseDate(formData.dueDate)}
+                value={parseDateFromForm(formData.dueDate)}
                 onChange={(date) => {
                   if (date) {
-                    handleChange("dueDate", date.toString());
+                    handleChange("dueDate", formatDateForForm(date));
                   }
                 }}
-                variant="flat"
-                radius="md"
-                showMonthAndYearPickers
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-zinc-400">Devise</label>
+              <Label className="text-zinc-400">Devise</Label>
               <Select
-                selectedKeys={[formData.currency]}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0];
-                  if (selected) handleChange("currency", selected.toString());
-                }}
-                variant="flat"
-                radius="md"
+                value={formData.currency}
+                onValueChange={(value) => handleChange("currency", value)}
               >
-                {currencies.map((currency) => (
-                  <SelectItem key={currency.value} textValue={currency.label}>
-                    {currency.label}
-                  </SelectItem>
-                ))}
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencies.map((currency) => (
+                    <SelectItem key={currency.value} value={currency.value}>
+                      {currency.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Line Items */}
-      <Card className="glass border border-zinc-800" radius="lg">
-        <CardBody className="p-6">
+      <Card className="glass border border-zinc-800 rounded-lg">
+        <CardContent className="p-6">
           <LineItems
             items={formData.items}
             onChange={handleItemsChange}
             currency={formData.currency}
           />
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Totals & Tax */}
-      <Card className="glass border border-zinc-800" radius="lg">
-        <CardBody className="p-6">
+      <Card className="glass border border-zinc-800 rounded-lg">
+        <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-6">Totaux</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div className="flex flex-col gap-2">
-                <label className="text-sm text-zinc-400">Taux de TVA (%)</label>
+                <Label className="text-zinc-400">Taux de TVA (%)</Label>
                 <Input
                   type="number"
                   value={formData.taxRate.toString()}
@@ -277,12 +257,10 @@ export function InvoiceForm({
                   min={0}
                   max={100}
                   step={0.1}
-                  variant="flat"
-                  radius="md"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-sm text-zinc-400">Remise (€)</label>
+                <Label className="text-zinc-400">Remise (€)</Label>
                 <Input
                   type="number"
                   value={formData.discount.toString()}
@@ -291,8 +269,6 @@ export function InvoiceForm({
                   }
                   min={0}
                   step={0.01}
-                  variant="flat"
-                  radius="md"
                 />
               </div>
             </div>
@@ -311,7 +287,7 @@ export function InvoiceForm({
                 <span>TVA ({formData.taxRate}%)</span>
                 <span>{formatCurrency(totals.taxAmount, formData.currency)}</span>
               </div>
-              <Divider className="bg-zinc-700 my-2" />
+              <Separator className="bg-zinc-700 my-2" />
               <div className="flex justify-between text-xl font-bold">
                 <span>Total</span>
                 <span className="text-primary-400">
@@ -320,65 +296,45 @@ export function InvoiceForm({
               </div>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Notes & Terms */}
-      <Card className="glass border border-zinc-800" radius="lg">
-        <CardBody className="p-6">
+      <Card className="glass border border-zinc-800 rounded-lg">
+        <CardContent className="p-6">
           <h3 className="text-lg font-semibold mb-6">Notes & Conditions</h3>
           <div className="space-y-6">
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-zinc-400">Notes pour le client</label>
+              <Label className="text-zinc-400">Notes pour le client</Label>
               <Textarea
                 placeholder="Informations supplémentaires pour le client..."
                 value={formData.notes}
                 onChange={(e) => handleChange("notes", e.target.value)}
-                variant="flat"
-                radius="md"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm text-zinc-400">Conditions de paiement</label>
+              <Label className="text-zinc-400">Conditions de paiement</Label>
               <Textarea
                 placeholder="Ex: Paiement à 30 jours..."
                 value={formData.terms}
                 onChange={(e) => handleChange("terms", e.target.value)}
-                variant="flat"
-                radius="md"
               />
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Actions */}
       <div className="flex gap-4 justify-end">
         {onPreview && (
-          <Button
-            variant="bordered"
-            radius="lg"
-            className="border-zinc-600 px-6"
-            onPress={onPreview}
-          >
-            <span className="inline-flex items-center gap-2">
-              <Eye className="w-4 h-4" />
-              Aperçu PDF
-            </span>
+          <Button type="button" variant="outline" onClick={onPreview}>
+            <Eye className="w-4 h-4 mr-2" />
+            Aperçu PDF
           </Button>
         )}
-        <Button
-          type="submit"
-          color="primary"
-          variant="shadow"
-          radius="lg"
-          className="px-6"
-          isLoading={isLoading}
-        >
-          <span className="inline-flex items-center gap-2">
-            <Save className="w-4 h-4" />
-            Enregistrer la facture
-          </span>
+        <Button type="submit" disabled={isLoading}>
+          <Save className="w-4 h-4 mr-2" />
+          {isLoading ? "Enregistrement..." : "Enregistrer la facture"}
         </Button>
       </div>
     </form>
