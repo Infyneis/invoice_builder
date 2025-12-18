@@ -1,0 +1,196 @@
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  🧾 Invoice Builder - Database Schema                                     ║
+// ║  Professional invoices with Business & Freelancer modes                   ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 📋 Enums
+// ═══════════════════════════════════════════════════════════════════════════
+
+enum InvoiceType {
+  BUSINESS
+  FREELANCER
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum Currency {
+  EUR
+  USD
+  GBP
+  CHF
+  CAD
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 👤 Profile Model (Your business/freelancer info)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Profile {
+  id        String      @id @default(cuid())
+  type      InvoiceType @default(BUSINESS)
+
+  // Common fields
+  name           String    // Company name or full name
+  email          String
+  phone          String?
+  address        String
+  city           String
+  postalCode     String
+  country        String    @default("France")
+  website        String?
+
+  // Business-specific fields
+  companyName    String?
+  taxId          String?   // VAT/SIRET number
+  registrationNo String?   // Company registration
+
+  // Freelancer-specific fields
+  title          String?   // Professional title
+  hourlyRate     Decimal?  @db.Decimal(10, 2)
+
+  // Bank details
+  bankName       String?
+  iban           String?
+  bic            String?
+
+  // Branding
+  logo           String?   // URL or base64
+  accentColor    String    @default("#8B5CF6")
+
+  // Settings
+  defaultCurrency Currency @default(EUR)
+  defaultTaxRate  Decimal  @default(20) @db.Decimal(5, 2)
+  defaultPaymentTerms Int  @default(30)
+  invoicePrefix  String    @default("INV")
+  nextInvoiceNum Int       @default(1)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  invoices Invoice[]
+  clients  Client[]
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 👥 Client Model
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Client {
+  id        String @id @default(cuid())
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  // Contact info
+  name      String    // Company or person name
+  email     String
+  phone     String?
+  address   String
+  city      String
+  postalCode String
+  country   String    @default("France")
+
+  // Business client fields
+  companyName String?
+  taxId       String?
+  contactName String?   // Contact person at company
+
+  // Notes
+  notes     String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  invoices  Invoice[]
+
+  @@index([profileId])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🧾 Invoice Model
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Invoice {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  clientId  String
+  client    Client        @relation(fields: [clientId], references: [id])
+
+  // Invoice details
+  number    String        @unique
+  type      InvoiceType   @default(BUSINESS)
+  status    InvoiceStatus @default(DRAFT)
+  currency  Currency      @default(EUR)
+
+  // Dates
+  issueDate DateTime      @default(now())
+  dueDate   DateTime
+  paidDate  DateTime?
+
+  // Amounts
+  subtotal  Decimal       @db.Decimal(10, 2)
+  taxRate   Decimal       @default(20) @db.Decimal(5, 2)
+  taxAmount Decimal       @db.Decimal(10, 2)
+  discount  Decimal       @default(0) @db.Decimal(10, 2)
+  total     Decimal       @db.Decimal(10, 2)
+
+  // Additional info
+  notes     String?       // Notes to client
+  terms     String?       // Payment terms text
+  footer    String?       // Footer text
+
+  // Metadata
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relations
+  items     InvoiceItem[]
+
+  @@index([profileId])
+  @@index([clientId])
+  @@index([status])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 📝 Invoice Item Model
+// ═══════════════════════════════════════════════════════════════════════════
+
+model InvoiceItem {
+  id        String  @id @default(cuid())
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  // Item details
+  description String
+  quantity    Decimal @db.Decimal(10, 2)
+  unitPrice   Decimal @db.Decimal(10, 2)
+  amount      Decimal @db.Decimal(10, 2)
+
+  // Optional fields
+  unit        String?  // "hour", "day", "piece", etc.
+
+  // Order
+  order       Int     @default(0)
+
+  @@index([invoiceId])
+}
