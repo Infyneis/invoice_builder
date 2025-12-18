@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +16,12 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   ArrowLeft,
   Download,
   Send,
@@ -21,13 +29,18 @@ import {
   Calendar,
   User,
   FileText,
+  MoreHorizontal,
+  XCircle,
+  Clock,
+  FileEdit,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   formatCurrency,
   formatDate,
   getStatusLabel,
 } from "@/lib/utils";
-import type { Invoice, Client, InvoiceItem } from "@/types/invoice";
+import type { Invoice, Client, InvoiceItem, InvoiceStatus } from "@/types/invoice";
 
 interface InvoiceDetailProps {
   invoice: Invoice & { client: Client | null; items: InvoiceItem[] };
@@ -42,6 +55,33 @@ const statusVariantMap: Record<string, "default" | "secondary" | "destructive" |
 };
 
 export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
+  const router = useRouter();
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const updateStatus = async (newStatus: InvoiceStatus) => {
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        toast.success(`Facture marquée comme "${getStatusLabel(newStatus)}"`);
+        router.refresh();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Erreur lors de la mise à jour");
+      }
+    } catch (error) {
+      console.error("Failed to update invoice:", error);
+      toast.error("Erreur lors de la mise à jour");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Header */}
@@ -70,17 +110,76 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
             </Link>
           </Button>
           {invoice.status === "DRAFT" && (
-            <Button>
+            <Button
+              onClick={() => updateStatus("SENT")}
+              disabled={isUpdating}
+            >
               <Send className="w-4 h-4 mr-2" />
-              Marquer envoyée
+              {isUpdating ? "..." : "Marquer envoyée"}
             </Button>
           )}
           {invoice.status === "SENT" && (
-            <Button className="bg-green-600 hover:bg-green-700">
+            <Button
+              className="bg-green-600 hover:bg-green-700"
+              onClick={() => updateStatus("PAID")}
+              disabled={isUpdating}
+            >
               <CheckCircle className="w-4 h-4 mr-2" />
-              Marquer payée
+              {isUpdating ? "..." : "Marquer payée"}
             </Button>
           )}
+          {invoice.status === "SENT" && (
+            <Button
+              variant="destructive"
+              onClick={() => updateStatus("OVERDUE")}
+              disabled={isUpdating}
+            >
+              <Clock className="w-4 h-4 mr-2" />
+              {isUpdating ? "..." : "Marquer en retard"}
+            </Button>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" disabled={isUpdating}>
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {invoice.status !== "DRAFT" && (
+                <DropdownMenuItem onClick={() => updateStatus("DRAFT")}>
+                  <FileEdit className="w-4 h-4 mr-2" />
+                  Remettre en brouillon
+                </DropdownMenuItem>
+              )}
+              {invoice.status !== "SENT" && invoice.status !== "DRAFT" && (
+                <DropdownMenuItem onClick={() => updateStatus("SENT")}>
+                  <Send className="w-4 h-4 mr-2" />
+                  Marquer envoyée
+                </DropdownMenuItem>
+              )}
+              {invoice.status !== "PAID" && (
+                <DropdownMenuItem onClick={() => updateStatus("PAID")}>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Marquer payée
+                </DropdownMenuItem>
+              )}
+              {invoice.status !== "OVERDUE" && invoice.status !== "PAID" && (
+                <DropdownMenuItem onClick={() => updateStatus("OVERDUE")}>
+                  <Clock className="w-4 h-4 mr-2" />
+                  Marquer en retard
+                </DropdownMenuItem>
+              )}
+              {invoice.status !== "CANCELLED" && (
+                <DropdownMenuItem
+                  onClick={() => updateStatus("CANCELLED")}
+                  className="text-red-400"
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Annuler la facture
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
