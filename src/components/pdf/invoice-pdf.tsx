@@ -1,39 +1,17 @@
-"use client";
-
 import {
   Document,
   Page,
   Text,
   View,
   StyleSheet,
-  Font,
 } from "@react-pdf/renderer";
 import type { Invoice, InvoiceItem, Client, Profile } from "@/types/invoice";
-
-// Register fonts (using system fonts as fallback)
-Font.register({
-  family: "Inter",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff2",
-      fontWeight: 400,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hjp-Ek-_EeA.woff2",
-      fontWeight: 600,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYAZ9hjp-Ek-_EeA.woff2",
-      fontWeight: 700,
-    },
-  ],
-});
 
 const styles = StyleSheet.create({
   page: {
     padding: 40,
     fontSize: 10,
-    fontFamily: "Inter",
+    fontFamily: "Helvetica",
     backgroundColor: "#ffffff",
     color: "#1f2937",
   },
@@ -245,7 +223,10 @@ function formatCurrency(amount: number, currency: string = "EUR"): string {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency,
-  }).format(amount);
+  })
+    .format(amount)
+    // Replace narrow non-breaking space (U+202F) with regular space for PDF compatibility
+    .replace(/\u202F/g, " ");
 }
 
 function formatDate(date: Date | string): string {
@@ -300,13 +281,13 @@ export function InvoicePDF({ invoice, profile }: InvoicePDFProps) {
           </View>
           <View style={styles.column}>
             <View style={{ marginBottom: 12 }}>
-              <Text style={styles.label}>Date d&apos;émission</Text>
+              <Text style={styles.label}>Date d'émission</Text>
               <Text style={styles.valueBold}>
                 {formatDate(invoice.issueDate)}
               </Text>
             </View>
             <View style={{ marginBottom: 12 }}>
-              <Text style={styles.label}>Date d&apos;échéance</Text>
+              <Text style={styles.label}>Date d'échéance</Text>
               <Text style={styles.valueBold}>{formatDate(invoice.dueDate)}</Text>
             </View>
             <View>
