@@ -1,0 +1,28 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║  🧾 Invoice Builder - Docker Compose                                      ║
+# ║  PostgreSQL database for invoice storage                                  ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+services:
+  # 🐘 PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: invoice_builder_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: invoice_user
+      POSTGRES_PASSWORD: invoice_password
+      POSTGRES_DB: invoice_builder
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invoice_user -d invoice_builder"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local

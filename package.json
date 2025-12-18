@@ -1,0 +1,43 @@
+{
+  "name": "invoice-builder",
+  "version": "1.0.0",
+  "description": "Professional invoice builder with PDF export - Year Coding Challenge #7",
+  "author": "Samy DJEMILI",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma": "prisma",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@heroui/react": "^2.7.5",
+    "@internationalized/date": "^3.10.1",
+    "@prisma/client": "^6.1.0",
+    "@react-pdf/renderer": "^4.1.5",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^11.15.0",
+    "lucide-react": "^0.468.0",
+    "next": "canary",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "canary",
+    "postcss": "^8.4.49",
+    "prisma": "^6.1.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  }
+}
