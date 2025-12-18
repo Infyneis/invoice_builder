@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,8 +13,19 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Plus, FileText, Download, Eye } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Plus, FileText, Download, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   formatCurrency,
   formatDate,
@@ -33,6 +46,35 @@ const statusVariantMap: Record<string, "default" | "secondary" | "destructive" |
 };
 
 export function InvoiceList({ invoices }: InvoiceListProps) {
+  const router = useRouter();
+  const [deleteTarget, setDeleteTarget] = useState<Invoice | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const deleteInvoice = async () => {
+    if (!deleteTarget) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/invoices/${deleteTarget.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        toast.success("Facture supprimée avec succès");
+        router.refresh();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error("Failed to delete invoice:", error);
+      toast.error("Erreur lors de la suppression");
+    } finally {
+      setIsDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
+
   return (
     <Card className="glass border border-zinc-800 rounded-lg">
       <CardContent className="p-0">
@@ -65,14 +107,15 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
             </TableHeader>
             <TableBody>
               {invoices.map((invoice) => (
-                <TableRow key={invoice.id} className="hover:bg-zinc-800/50">
+                <TableRow
+                  key={invoice.id}
+                  className="hover:bg-zinc-800/50 cursor-pointer"
+                  onClick={() => router.push(`/invoices/${invoice.id}`)}
+                >
                   <TableCell>
-                    <Link
-                      href={`/invoices/${invoice.id}`}
-                      className="text-primary-400 hover:underline font-medium"
-                    >
+                    <span className="text-primary-400 font-medium">
                       {invoice.number}
-                    </Link>
+                    </span>
                   </TableCell>
                   <TableCell>
                     <div>
@@ -98,17 +141,20 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
                       {getStatusLabel(invoice.status)}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button asChild variant="secondary" size="icon">
-                        <Link href={`/invoices/${invoice.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <div className="flex gap-1">
                       <Button asChild variant="secondary" size="icon">
                         <Link href={`/api/pdf/${invoice.id}`}>
                           <Download className="w-4 h-4" />
                         </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeleteTarget(invoice)}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -117,6 +163,28 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
             </TableBody>
           </Table>
         )}
+
+        <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Supprimer la facture {deleteTarget?.number} ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Cette action est irréversible. La facture sera définitivement supprimée
+                ainsi que toutes les lignes associées.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={deleteInvoice}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isDeleting ? "Suppression..." : "Supprimer"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );

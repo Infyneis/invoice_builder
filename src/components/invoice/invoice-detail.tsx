@@ -19,8 +19,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   ArrowLeft,
   Download,
@@ -33,6 +45,7 @@ import {
   XCircle,
   Clock,
   FileEdit,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -57,6 +70,8 @@ const statusVariantMap: Record<string, "default" | "secondary" | "destructive" |
 export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
   const router = useRouter();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const updateStatus = async (newStatus: InvoiceStatus) => {
     setIsUpdating(true);
@@ -79,6 +94,29 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
       toast.error("Erreur lors de la mise à jour");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const deleteInvoice = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        toast.success("Facture supprimée avec succès");
+        router.push("/invoices");
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error("Failed to delete invoice:", error);
+      toast.error("Erreur lors de la suppression");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -178,8 +216,38 @@ export function InvoiceDetail({ invoice }: InvoiceDetailProps) {
                   Annuler la facture
                 </DropdownMenuItem>
               )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setShowDeleteDialog(true)}
+                className="text-red-400"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Supprimer la facture
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Supprimer la facture {invoice.number} ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action est irréversible. La facture sera définitivement supprimée
+                  ainsi que toutes les lignes associées.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={deleteInvoice}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {isDeleting ? "Suppression..." : "Supprimer"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
