@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,6 @@ import Link from "next/link";
 import {
   formatCurrency,
   formatDate,
-  getStatusColor,
   getStatusLabel,
 } from "@/lib/utils";
 import type { Invoice } from "@/types/invoice";
@@ -34,6 +34,8 @@ const statusVariantMap: Record<string, "default" | "secondary" | "destructive" |
 };
 
 export function RecentInvoices({ invoices }: RecentInvoicesProps) {
+  const router = useRouter();
+
   return (
     <Card className="glass border border-zinc-800 rounded-lg">
       <CardHeader className="flex flex-row justify-between items-center px-6 py-4">
@@ -76,14 +78,12 @@ export function RecentInvoices({ invoices }: RecentInvoicesProps) {
                 <TableRow
                   key={invoice.id}
                   className="hover:bg-zinc-800/50 cursor-pointer"
+                  onClick={() => router.push(`/invoices/${invoice.id}`)}
                 >
                   <TableCell>
-                    <Link
-                      href={`/invoices/${invoice.id}`}
-                      className="text-primary-400 hover:underline"
-                    >
+                    <span className="text-primary-400 font-medium">
                       {invoice.number}
-                    </Link>
+                    </span>
                   </TableCell>
                   <TableCell>{invoice.client?.name || "—"}</TableCell>
                   <TableCell className="text-zinc-400">
