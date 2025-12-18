@@ -16,6 +16,16 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   ArrowLeft,
   Mail,
   Phone,
@@ -24,6 +34,7 @@ import {
   FileText,
   Trash2,
   Plus,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency, formatDate, getStatusLabel } from "@/lib/utils";
@@ -44,12 +55,9 @@ const statusVariantMap: Record<string, "default" | "secondary" | "destructive" |
 export function ClientDetail({ client }: ClientDetailProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleDelete = async () => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
-      return;
-    }
-
+  const deleteClient = async () => {
     setIsDeleting(true);
     try {
       const res = await fetch(`/api/clients/${client.id}`, {
@@ -68,6 +76,7 @@ export function ClientDetail({ client }: ClientDetailProps) {
       toast.error("Erreur lors de la suppression");
     } finally {
       setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -100,13 +109,53 @@ export function ClientDetail({ client }: ClientDetailProps) {
           </Button>
           <Button
             variant="destructive"
-            onClick={handleDelete}
-            disabled={isDeleting || client.invoices.length > 0}
-            title={client.invoices.length > 0 ? "Impossible de supprimer un client avec des factures" : "Supprimer le client"}
+            onClick={() => setShowDeleteDialog(true)}
+            disabled={isDeleting}
           >
             <Trash2 className="w-4 h-4 mr-2" />
-            {isDeleting ? "Suppression..." : "Supprimer"}
+            Supprimer
           </Button>
+
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
+                    <AlertTriangle className="h-5 w-5 text-red-500" />
+                  </div>
+                  <AlertDialogTitle className="text-red-400">
+                    {client.invoices.length > 0
+                      ? `Impossible de supprimer ${client.name}`
+                      : `Supprimer ${client.name} ?`}
+                  </AlertDialogTitle>
+                </div>
+                <AlertDialogDescription className="pt-2">
+                  {client.invoices.length > 0 ? (
+                    <>
+                      Ce client possède <strong className="text-red-400">{client.invoices.length} facture(s)</strong> associée(s).
+                      Vous devez d&apos;abord supprimer toutes les factures liées à ce client avant de pouvoir le supprimer.
+                    </>
+                  ) : (
+                    "Cette action est irréversible. Le client sera définitivement supprimé."
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>
+                  {client.invoices.length > 0 ? "Fermer" : "Annuler"}
+                </AlertDialogCancel>
+                {client.invoices.length === 0 && (
+                  <AlertDialogAction
+                    onClick={deleteClient}
+                    disabled={isDeleting}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    {isDeleting ? "Suppression..." : "Supprimer"}
+                  </AlertDialogAction>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

@@ -12,7 +12,17 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Plus, Users, Mail, Phone, MapPin, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Plus, Users, Mail, Phone, MapPin, Trash2, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import type { Client } from "@/types/invoice";
@@ -27,22 +37,15 @@ interface ClientListProps {
 
 export function ClientList({ clients }: ClientListProps) {
   const router = useRouter();
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ClientWithInvoiceCount | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async (client: ClientWithInvoiceCount) => {
-    const invoiceCount = client._count?.invoices || 0;
-    if (invoiceCount > 0) {
-      toast.error(`Impossible de supprimer ce client car il a ${invoiceCount} facture(s).`);
-      return;
-    }
+  const deleteClient = async () => {
+    if (!deleteTarget) return;
 
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${client.name} ?`)) {
-      return;
-    }
-
-    setDeletingId(client.id);
+    setIsDeleting(true);
     try {
-      const res = await fetch(`/api/clients/${client.id}`, {
+      const res = await fetch(`/api/clients/${deleteTarget.id}`, {
         method: "DELETE",
       });
 
@@ -57,9 +60,12 @@ export function ClientList({ clients }: ClientListProps) {
       console.error("Failed to delete client:", error);
       toast.error("Erreur lors de la suppression");
     } finally {
-      setDeletingId(null);
+      setIsDeleting(false);
+      setDeleteTarget(null);
     }
   };
+
+  const getInvoiceCount = (client: ClientWithInvoiceCount) => client._count?.invoices || 0;
 
   return (
     <Card className="glass border border-zinc-800 rounded-lg">
@@ -135,9 +141,8 @@ export function ClientList({ clients }: ClientListProps) {
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDelete(client);
+                          setDeleteTarget(client);
                         }}
-                        disabled={deletingId === client.id}
                         className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -149,6 +154,47 @@ export function ClientList({ clients }: ClientListProps) {
             </TableBody>
           </Table>
         )}
+
+        <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                </div>
+                <AlertDialogTitle className="text-red-400">
+                  {deleteTarget && getInvoiceCount(deleteTarget) > 0
+                    ? `Impossible de supprimer ${deleteTarget?.name}`
+                    : `Supprimer ${deleteTarget?.name} ?`}
+                </AlertDialogTitle>
+              </div>
+              <AlertDialogDescription className="pt-2">
+                {deleteTarget && getInvoiceCount(deleteTarget) > 0 ? (
+                  <>
+                    Ce client possède <strong className="text-red-400">{getInvoiceCount(deleteTarget)} facture(s)</strong> associée(s).
+                    Vous devez d&apos;abord supprimer toutes les factures liées à ce client avant de pouvoir le supprimer.
+                  </>
+                ) : (
+                  "Cette action est irréversible. Le client sera définitivement supprimé."
+                )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>
+                {deleteTarget && getInvoiceCount(deleteTarget) > 0 ? "Fermer" : "Annuler"}
+              </AlertDialogCancel>
+              {deleteTarget && getInvoiceCount(deleteTarget) === 0 && (
+                <AlertDialogAction
+                  onClick={deleteClient}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {isDeleting ? "Suppression..." : "Supprimer"}
+                </AlertDialogAction>
+              )}
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );
