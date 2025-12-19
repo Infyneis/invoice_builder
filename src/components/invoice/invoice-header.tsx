@@ -13,7 +13,7 @@ export function InvoiceHeader() {
       </div>
       <Button asChild className="rounded-full">
         <Link href="/invoices/new">
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           Nouvelle Facture
         </Link>
       </Button>

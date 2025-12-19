@@ -74,7 +74,7 @@ export function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="rounded-full">
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4" />
                   Nouveau
                 </Button>
               </DropdownMenuTrigger>

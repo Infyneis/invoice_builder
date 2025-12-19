@@ -79,7 +79,7 @@ export function ClientList({ clients }: ClientListProps) {
             </p>
             <Button asChild className="rounded-full">
               <Link href="/clients/new">
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4" />
                 Ajouter un client
               </Link>
             </Button>

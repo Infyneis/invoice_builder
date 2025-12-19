@@ -64,7 +64,7 @@ export function LineItems({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Lignes de facture</h3>
         <Button size="sm" onClick={addItem}>
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           Ajouter une ligne
         </Button>
       </div>
@@ -73,7 +73,7 @@ export function LineItems({
         <div className="text-center py-8 text-zinc-400 border border-dashed border-zinc-700 rounded-xl">
           <p>Aucune ligne ajoutée</p>
           <Button size="sm" className="mt-2" onClick={addItem}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4" />
             Ajouter la première ligne
           </Button>
         </div>

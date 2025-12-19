@@ -13,7 +13,7 @@ export function ClientHeader() {
       </div>
       <Button asChild className="rounded-full">
         <Link href="/clients/new">
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           Nouveau Client
         </Link>
       </Button>

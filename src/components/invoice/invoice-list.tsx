@@ -87,7 +87,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
             </p>
             <Button asChild className="rounded-full">
               <Link href="/invoices/new">
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4" />
                 Créer une facture
               </Link>
             </Button>

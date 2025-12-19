@@ -103,7 +103,7 @@ export function ClientDetail({ client }: ClientDetailProps) {
         <div className="flex gap-2">
           <Button asChild variant="outline">
             <Link href={`/invoices/new?clientId=${client.id}`}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4" />
               Nouvelle facture
             </Link>
           </Button>
@@ -232,7 +232,7 @@ export function ClientDetail({ client }: ClientDetailProps) {
                   <p>Aucune facture pour ce client</p>
                   <Button asChild className="mt-4" size="sm">
                     <Link href={`/invoices/new?clientId=${client.id}`}>
-                      <Plus className="w-4 h-4 mr-2" />
+                      <Plus className="w-4 h-4" />
                       Créer une facture
                     </Link>
                   </Button>
