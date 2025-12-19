@@ -113,7 +113,7 @@ A modern, professional **invoice builder** application featuring two distinct mo
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Next.js Frontend                            │
+│                      Next.js Frontend                           │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
 │  │ Invoice Form │  │ Invoice List │  │ PDF Preview/Download  │  │
 │  │ (Business/   │  │              │  │                       │  │
@@ -124,7 +124,7 @@ A modern, professional **invoice builder** application featuring two distinct mo
                        API Routes (App Router)
                               │
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Backend Services                            │
+│                      Backend Services                           │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
 │  │   Invoice    │  │    Client    │  │    PDF Generator      │  │
 │  │   Service    │  │   Service    │  │    (react-pdf)        │  │
@@ -202,7 +202,7 @@ This script automatically:
 2. 🐳 Starts PostgreSQL via Docker Compose
 3. 📦 Installs npm dependencies
 4. 🗄️ Sets up the database with Prisma
-5. 🚀 Launches the dev server at **http://localhost:3000**
+5. 🚀 Launches the dev server at **<http://localhost:3000>**
 
 ---
 
