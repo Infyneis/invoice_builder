@@ -5,7 +5,6 @@
 # ║   🧾 INVOICE BUILDER - Start Script                                       ║
 # ║   Professional invoice generation with PDF export                         ║
 # ║                                                                           ║
-# ║   Year Coding Challenge - Project #7                                      ║
 # ║   Author: Samy DJEMILI                                                    ║
 # ║                                                                           ║
 # ╚═══════════════════════════════════════════════════════════════════════════╝

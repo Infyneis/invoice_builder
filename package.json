@@ -1,7 +1,7 @@
 {
   "name": "invoice-builder",
   "version": "1.0.0",
-  "description": "Professional invoice builder with PDF export - Year Coding Challenge #7",
+  "description": "Professional invoice builder with PDF export",
   "author": "Samy DJEMILI",
   "private": true,
   "scripts": {

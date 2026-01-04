@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">🧾 Invoice Builder</h1>
-<h3 align="center">Professional invoice generation with PDF export <code>#7/365 - Year Coding Challenge</code></h3>
+<h3 align="center">Professional invoice generation with PDF export</h3>
 
 <p align="center">
   <em>Create, manage, and download beautiful invoices in seconds</em>
@@ -35,7 +35,6 @@
 A modern, professional **invoice builder** application featuring two distinct modes: **Business** for companies and **Freelancer** for independent professionals. Generate beautiful PDF invoices with a sleek purple-themed UI powered by HeroUI and Tailwind CSS.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/🚀_Year_Coding_Challenge-Project_%237-8B5CF6?style=for-the-badge" alt="Year Coding Challenge" />
   <img src="https://img.shields.io/badge/📅_Completed-December_18,_2024-A78BFA?style=for-the-badge" alt="Completed" />
   <img src="https://img.shields.io/badge/🎨_Theme-Purple_Modern-7C3AED?style=for-the-badge" alt="Theme" />
 </p>

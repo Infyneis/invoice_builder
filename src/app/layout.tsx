@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Invoice Builder | Professional Invoice Generation",
   description:
-    "Create professional invoices in seconds. Business and Freelancer modes with PDF export. Year Coding Challenge #7",
+    "Create professional invoices in seconds. Business and Freelancer modes with PDF export.",
   keywords: [
     "invoice",
     "invoice generator",
